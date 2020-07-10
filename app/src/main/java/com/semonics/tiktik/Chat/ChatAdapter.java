@@ -211,7 +211,7 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     chatimageholder.datetxt.setVisibility(View.VISIBLE);
                     chatimageholder.datetxt.setText(ChangeDate(chat.getTimestamp()));
                 }
-                Picasso.with(context).load(chat.getPic_url()).placeholder(R.drawable.image_placeholder).resize(400,400).centerCrop().into(chatimageholder.chatimage);
+
             }else {
                 chatimageholder.datetxt.setVisibility(View.VISIBLE);
                 chatimageholder.datetxt.setText(ChangeDate(chat.getTimestamp()));

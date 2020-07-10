@@ -15,6 +15,7 @@
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
+
         <TextView
             android:id="@+id/lblHeader"
             android:layout_width="match_parent"
@@ -28,11 +29,30 @@
             android:textSize="36sp"
             android:textStyle="bold" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:id="@+id/activity_sign_up_ll_country"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:src="@drawable/com_facebook_button_icon"
+                android:id="@+id/activity_sign_up_iv_country"
+                android:layout_height="40dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:text="Select Country"
+                android:id="@+id/activity_sign_up_tv_country_name"
+                android:padding="10dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
         <EditText
             android:id="@+id/activity_sign_up_email"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
             android:alpha="0.7"
             android:background="@drawable/login_border"
@@ -55,16 +75,7 @@
             android:padding="10dp"
             android:textColor="#fff"
             android:textColorHint="#fff" />
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:id="@+id/activity_sign_up_et_birthday"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/login_border"
-            android:clickable="true"
-            android:padding="10dp"
-            android:editable="false"
-            android:hint="Select birthday"/>
+
         <RadioGroup
             android:id="@+id/radioGrp"
             android:layout_marginTop="10dp"
