@@ -100,12 +100,6 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         // Inflate the layout for this fragment
         view= inflater.inflate(R.layout.fragment_profile_tab, container, false);
         context=getContext();
-
-
-
-
-
-
         return init();
     }
 
@@ -612,6 +606,4 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         super.onDetach();
         Functions.deleteCache(context);
     }
-
-
 }

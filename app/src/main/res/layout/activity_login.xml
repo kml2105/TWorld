@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
-    android:backgroundTint="#000"
+    android:backgroundTint="#000000"
     tools:context="com.semonics.tiktik.Accounts.LoginActivity">
 
     <LinearLayout
@@ -23,33 +23,36 @@
             android:layout_marginBottom="10dp"
             android:gravity="center_horizontal"
             android:padding="20dp"
-            android:text="T World"
+            android:text="@string/app_name"
             android:textColor="#fff"
             android:textSize="36sp"
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/edtEmail"
+            android:id="@+id/activity_log_in_et_user_name"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:adjustViewBounds="true"
             android:alpha="0.7"
             android:background="@drawable/login_border"
-            android:hint="Email / Mobile Number"
+            android:hint="@string/email_mobile_no"
             android:padding="10dp"
+            android:textSize="12sp"
             android:textColor="#fff"
             android:textColorHint="#fff" />
 
         <EditText
-            android:id="@+id/edtPassword"
+            android:id="@+id/activity_log_in_et_password"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
             android:alpha="0.7"
+            android:enabled="true"
+            android:textSize="12sp"
             android:background="@drawable/login_border"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="10dp"
             android:textColor="#fff"
@@ -60,17 +63,25 @@
             android:layout_height="wrap_content"
             android:textAlignment="textEnd"
             android:layout_gravity="end"
-            android:text="Forgot your password ?"
+            android:text="@string/forgotPW"
             android:textColor="#fff"
             android:textSize="12sp" />
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progress_bar"
+            android:visibility="invisible"
+            android:layout_gravity="center_horizontal"
+            android:theme="@style/Progressbar_style"
+   />
 
         <Button
-            android:id="@+id/btn_log_in"
+            android:id="@+id/activity_log_in_btn_log_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:backgroundTint="@color/com_facebook_blue"
-            android:text="Log In"
+            android:text="@string/login"
             android:textAllCaps="false"
             android:textColor="#fff" />
 
@@ -79,7 +90,7 @@
             android:layout_marginTop="15dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="OR"
+            android:text="@string/or"
             android:textColor="#fff"
             android:textSize="15sp" />
 
@@ -96,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="Don't have an account ?  " />
+            android:text="@string/DontHaveAnAccount" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -104,6 +115,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_sign_up"
             android:textSize="18sp"
-            android:text="Sign Up" />
+            android:text="@string/sign_up" />
     </LinearLayout>
 </RelativeLayout>

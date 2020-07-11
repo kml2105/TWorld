@@ -86,7 +86,7 @@
     </style>
 
     <style name="Progressbar_style" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/app_color</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
     </style>
 
 </resources>

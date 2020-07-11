@@ -6,9 +6,6 @@ import android.os.Environment;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-/**
- * Created by AQEEL on 2/15/2019.
- */
 
 public class Variables {
 
@@ -89,11 +86,11 @@ public class Variables {
     public static String privacy_policy="https://www.termsfeed.com/privacy-policy/4dec1a564a01ea0d15ed86c97c4e8253";
 
     
-    public static String domain="http://domain.com/API/tictic/index.php?p=";
-    public static String base_url="http://domain.com/API/tictic/";
+    public static String base_url="http://18.188.113.192:80/";
+    public static String domain="http://18.188.113.192:80/";
 
-
-    public static String SignUp =domain+"signup";
+    public static String SignUp =base_url+"signup";
+    public static String logInAPI = base_url + "authenticate";
     public static String uploadVideo =domain+"uploadVideo";
     public static String showAllVideos =domain+"showAllVideos";
     public static String showMyAllVideos=domain+"showMyAllVideos";
@@ -115,9 +112,5 @@ public class Variables {
     public static String sendPushNotification=domain+"sendPushNotification";
     public static String uploadImage=domain+"uploadImage";
     public static String DeleteVideo=domain+"DeleteVideo";
-
-
-
-
 
 }
