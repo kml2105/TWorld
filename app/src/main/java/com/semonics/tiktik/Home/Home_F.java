@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import com.daasuu.gpuv.composer.FillMode;
 import com.semonics.tiktik.SimpleClasses.ApiRequest;
 import com.semonics.tiktik.SimpleClasses.Callback;
+import com.semonics.tiktik.SimpleClasses.WSParams;
 import com.semonics.tiktik.SoundLists.VideoSound_A;
 import com.google.android.material.tabs.TabLayout;
 
@@ -182,11 +183,11 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             @Override
             public void onRefresh() {
                 currentPage=-1;
-                Call_Api_For_get_Allvideos();
+                //Call_Api_For_get_Allvideos();
             }
         });
 
-        Call_Api_For_get_Allvideos();
+        //Call_Api_For_get_Allvideos();
 
         return view;
     }
@@ -260,19 +261,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     // Bottom two function will call the api and get all the videos form api and parse the json data
     private void Call_Api_For_get_Allvideos() {
 
-
-        Log.d(Variables.tag, MainMenuActivity.token);
-
-        JSONObject parameters = new JSONObject();
-        try {
-            parameters.put("fb_id", Variables.sharedPreferences.getString(Variables.u_id,"0"));
-            parameters.put("token",MainMenuActivity.token);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        ApiRequest.Call_Api(context, Variables.showAllVideos, parameters, new Callback() {
+        ApiRequest.Call_Api(context, Variables.videoForFollowingAPI, null, new Callback() {
             @Override
             public void Responce(String resp) {
                 swiperefresh.setRefreshing(false);
@@ -290,13 +279,13 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
         try {
             JSONObject jsonObject=new JSONObject(responce);
-            String code=jsonObject.optString("code");
-            if(code.equals("200")){
-                JSONArray msgArray=jsonObject.getJSONArray("msg");
+            int code=jsonObject.optInt(WSParams.WS_KEY_CODE);
+            if(code==200){
+                JSONArray msgArray=jsonObject.getJSONArray(WSParams.WS_KEY_OBJ);
                 for (int i=0;i<msgArray.length();i++) {
                     JSONObject itemdata = msgArray.optJSONObject(i);
-                    Home_Get_Set item=new Home_Get_Set();
-                    item.fb_id=itemdata.optString("fb_id");
+                   /* Home_Get_Set item=new Home_Get_Set();
+                    item.fb_id=itemdata.optString("_id");
 
                     JSONObject user_info=itemdata.optJSONObject("user_info");
 
@@ -323,8 +312,9 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
                     item.thum=Variables.base_url+itemdata.optString("thum");
                     item.created_date=itemdata.optString("created");
+                     data_list.add(item);*/
 
-                    data_list.add(item);
+
                 }
 
                 Set_Adapter();

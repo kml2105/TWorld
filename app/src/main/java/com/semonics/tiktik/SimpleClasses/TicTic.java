@@ -26,12 +26,16 @@ public class TicTic extends Application {
     public static TicTic getInstance() {
         return instance;
     }
+
+
     public SessionManager getSession() {
         if (sessionManager == null) {
             sessionManager = new SessionManager(instance);
         }
         return sessionManager;
     }
+
+
 
 
 }

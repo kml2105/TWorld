@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.semonics.tiktik.Settings.SettingFragment;
 import com.semonics.tiktik.SimpleClasses.ApiRequest;
 import com.semonics.tiktik.SimpleClasses.Callback;
 import com.semonics.tiktik.SimpleClasses.Fragment_Callback;
@@ -113,7 +114,8 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
                 break;
 
             case R.id.setting_btn:
-                Open_Setting();
+                //Open_Setting();
+                openSetting();
                 break;
 
             case R.id.following_layout:
@@ -142,12 +144,18 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
         }
 
-
-
-
-
     }
-
+    public  void openSetting(){
+        SettingFragment settingFragment = new SettingFragment();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
+        transaction.addToBackStack(null);
+        View view=getActivity().findViewById(R.id.MainMenuFragment);
+        if(view!=null)
+            transaction.replace(R.id.MainMenuFragment, settingFragment).commit();
+        else
+            transaction.replace(R.id.Profile_F, settingFragment).commit();
+    }
 
     public View init(){
 

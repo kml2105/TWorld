@@ -42,14 +42,14 @@ public class MainMenuActivity extends AppCompatActivity {
 
         Variables.sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
 
-        Variables.user_id=Variables.sharedPreferences.getString(Variables.u_id,"");
-        Variables.user_name=Variables.sharedPreferences.getString(Variables.u_name,"");
-        Variables.user_pic=Variables.sharedPreferences.getString(Variables.u_pic,"");
+      //  Variables.user_id=Variables.sharedPreferences.getString(Variables.u_id,"");
+       // Variables.user_name=Variables.sharedPreferences.getString(Variables.u_name,"");
+       // Variables.user_pic=Variables.sharedPreferences.getString(Variables.u_pic,"");
 
 
-        token= FirebaseInstanceId.getInstance().getToken();
-        if(token==null || (token.equals("")||token.equals("null")))
-            token=Variables.sharedPreferences.getString(Variables.device_token,"null");
+      //  token= FirebaseInstanceId.getInstance().getToken();
+      /*  if(token==null || (token.equals("")||token.equals("null")))
+            token=Variables.sharedPreferences.getString(Variables.device_token,"null");*/
 
 
         if (savedInstanceState == null) {

@@ -55,6 +55,7 @@ dependencies {
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     testImplementation 'junit:junit:4.12'
     implementation 'androidx.multidex:multidex:2.0.0'
     implementation 'com.googlecode.mp4parser:isoparser:1.1.21'
@@ -90,7 +91,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.3'
     /*   implementation 'com.google.android.gms:play-services-ads:15.0.1'*/
 
-
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
     implementation 'com.github.MasayukiSuda:GPUVideo-android:v0.1.0'
     implementation 'jp.co.cyberagent.android:gpuimage:2.0.3'
     implementation 'com.github.bumptech.glide:glide:4.9.0'

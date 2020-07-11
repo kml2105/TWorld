@@ -22,13 +22,17 @@ public class ApiRequest {
         final String [] urlsplit=url.split("/");
         Log.d(Variables.tag,urlsplit[urlsplit.length-1]);
 
-        if(jsonObject!=null)
-        Log.d(Variables.tag+urlsplit[urlsplit.length-1],jsonObject.toString());
+        int Method ;
+        if(jsonObject!=null){
+            Method = Request.Method.POST;
+            Log.d(Variables.tag+urlsplit[urlsplit.length-1],jsonObject.toString());
+        }else{
+            Method = Request.Method.GET;
+        }
 
-         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method,
                 url, jsonObject,
                 new Response.Listener<JSONObject>() {
-
                     @Override
                     public void onResponse(JSONObject response) {
 

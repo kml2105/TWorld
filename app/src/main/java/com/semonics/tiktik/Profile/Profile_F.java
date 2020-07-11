@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import com.semonics.tiktik.Settings.SettingFragment;
 import com.semonics.tiktik.SimpleClasses.ApiRequest;
 import com.semonics.tiktik.SimpleClasses.Callback;
 import com.google.android.material.tabs.TabLayout;
@@ -136,7 +137,8 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
                 break;
 
             case R.id.setting_btn:
-                Open_Setting();
+               // Open_Setting();
+                openSetting();
                 break;
 
             case R.id.following_layout:
@@ -153,6 +155,21 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         }
     }
 
+
+public  void openSetting(){
+    SettingFragment settingFragment = new SettingFragment();
+    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+    transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
+    transaction.addToBackStack(null);
+
+
+    View view=getActivity().findViewById(R.id.MainMenuFragment);
+
+    if(view!=null)
+        transaction.replace(R.id.MainMenuFragment, settingFragment).commit();
+    else
+        transaction.replace(R.id.Profile_F, settingFragment).commit();
+    }
 
 
     public View init(){
@@ -552,14 +569,10 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
             transaction.replace(R.id.MainMenuFragment, see_image_f).commit();
         else
             transaction.replace(R.id.Profile_F, see_image_f).commit();
-
-
     }
 
 
-
     public void Open_Chat_F(){
-
         Chat_Activity chat_activity = new Chat_Activity();
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
@@ -575,9 +588,6 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
             transaction.replace(R.id.MainMenuFragment, chat_activity).commit();
         else
             transaction.replace(R.id.Profile_F, chat_activity).commit();
-
-
-
     }
 
 

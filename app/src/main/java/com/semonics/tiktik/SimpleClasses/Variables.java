@@ -31,7 +31,7 @@ public class Variables {
     public static String gallery_trimed_video=root + "/gallery_trimed_video.mp4";
     public static String gallery_resize_video=root + "/gallery_resize_video.mp4";
 
-    public static String app_folder=root+"/Tittic/";
+    public static String app_folder=root+"/tworld/";
 
     public static SharedPreferences sharedPreferences;
     public static String pref_name="pref_name";
@@ -89,9 +89,12 @@ public class Variables {
     public static String base_url="http://18.188.113.192:80/";
     public static String domain="http://18.188.113.192:80/";
 
-    public static String SignUp =base_url+"signup";
+    public static String SignUpAPI = base_url+"user";
     public static String logInAPI = base_url + "authenticate";
-    public static String uploadVideo =domain+"uploadVideo";
+    public static String uploadVideoAPI =domain+"document";
+    public static String videoForFollowingAPI =domain+"document/following";
+    public static String videoForYouAPI = domain +"document";
+
     public static String showAllVideos =domain+"showAllVideos";
     public static String showMyAllVideos=domain+"showMyAllVideos";
     public static String likeDislikeVideo=domain+"likeDislikeVideo";

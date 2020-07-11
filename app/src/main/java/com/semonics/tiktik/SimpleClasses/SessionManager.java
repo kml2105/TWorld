@@ -2,9 +2,13 @@ package com.semonics.tiktik.SimpleClasses;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.semonics.tiktik.Accounts.LoginActivity;
+import com.semonics.tiktik.R;
+import com.semonics.tiktik.SplashActivity;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -18,6 +22,8 @@ public class SessionManager {     /*Shared Preferences*/
     int PRIVATE_MODE = 0;     /*Sharedpref file name*/
     public static final String PREF_NAME = "tworld";
     public static final String PREF_TOKEN = "token";
+    public static final String PREF_IS_LOGIN = "isLogIn";
+    public static final String PREF_BASE_URL = "base_url";
 
     public SessionManager(Context context) {
         this._context = context;
@@ -57,7 +63,28 @@ public class SessionManager {     /*Shared Preferences*/
         editor.apply();
     }
 
+    public boolean getBoolean(final String key) {
+        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        return pref.getBoolean(key, false);
+    }
 
+    public void setBoolean(final String key, final boolean value) {
+        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        final SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+
+    /*Method to clear the login data of the application.*/
+    public void clearAllData() {
+        editor.remove(PREF_IS_LOGIN);
+        editor.remove(PREF_TOKEN);
+        editor.remove(PREF_NAME);
+        editor.apply();
+        TicTic.getInstance().getSession().setBoolean(PREF_IS_LOGIN,false);
+        //_context.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+       // _context.finish();
+    }
 
 
 

@@ -39,7 +39,7 @@
             android:theme="@style/transparent_status"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Splash_A"
+            android:name=".SplashActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>

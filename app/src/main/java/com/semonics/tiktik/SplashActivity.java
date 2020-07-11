@@ -9,9 +9,14 @@ import android.view.WindowManager;
 
 import com.semonics.tiktik.Accounts.LoginActivity;
 import com.semonics.tiktik.Main_Menu.MainMenuActivity;
+import com.semonics.tiktik.SimpleClasses.SessionManager;
+import com.semonics.tiktik.SimpleClasses.TicTic;
 import com.semonics.tiktik.SimpleClasses.Variables;
 
-public class Splash_A extends AppCompatActivity {
+import static com.semonics.tiktik.SimpleClasses.SessionManager.PREF_IS_LOGIN;
+import static com.semonics.tiktik.SimpleClasses.Utils.showLog;
+
+public class SplashActivity extends AppCompatActivity {
 
 
     CountDownTimer countDownTimer;
@@ -34,11 +39,19 @@ public class Splash_A extends AppCompatActivity {
             }
 
             public void onFinish() {
-
-                Intent intent=new Intent(Splash_A.this, LoginActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-                finish();
+                TicTic.getInstance().getSession().setBoolean(PREF_IS_LOGIN,true);
+                if(TicTic.getInstance().getSession().getBoolean(SessionManager.PREF_IS_LOGIN)){
+                    showLog("token:",TicTic.getInstance().getSession().getString(SessionManager.PREF_TOKEN));
+                    Intent i = new Intent(SplashActivity.this, MainMenuActivity.class);
+                    startActivity(i);
+                    overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                    finish();
+                }else{
+                    Intent intent=new Intent(SplashActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                    finish();
+                }
 
             }
         }.start();

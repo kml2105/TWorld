@@ -1,17 +1,38 @@
 <resources>
     <string name="app_name">T World</string>
+    <!--need to remove start-->
     <string name="facebook_app_id">fb_id</string>
     <string name="fb_login_protocol_scheme">fb(fb_id)</string>
     <string name="ad_app_id">ca-app-pub-3940256099942544~3347511713</string>
     <string name="my_Interstitial_Add">ca-app-pub-3940256099942544/1033173712</string>
     <string name="banner_ad">ca-app-pub-3940256099942544/6300978111</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--need to remove end-->
+    <!--login/sign up-->
     <string name="or">OR</string>
     <string name="forgotPW">Forgot your password ?</string>
     <string name="password">Password</string>
-    <string name="email_mobile_no">Email / Mobile Number</string>
+    <string name="email_mobile_no">Email / Phone Number</string>
     <string name="login">Log In</string>
     <string name="DontHaveAnAccount">Don\'t have an account ?  </string>
     <string name="sign_up">Sign Up</string>
+
+    <!--setting screen-->
+    <string name="follow_and_invite_friends">Follow and invite Friends</string>
+    <string name="follow_and_invite">Follow and invite</string>
+    <string name="security">Security</string>
+    <string name="privacy">Privacy</string>
+    <string name="notifications">Notifications</string>
+    <string name="account">Account</string>
+    <string name="help">Help</string>
+    <string name="about">About</string>
+    <string name="logout">Logout</string>
+    <string name="setting">Settings</string>
+
+    <string name="invite_by_email">Invite friends by email</string>
+    <string name="invite_by_wapp">Invite friends by WhatsApp</string>
+    <string name="invite_by_sms">Invite friends by SMS</string>
+    <string name="invite_by">Invite friends via...</string>
+
 
 </resources>
