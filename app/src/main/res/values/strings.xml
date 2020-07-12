@@ -34,5 +34,21 @@
     <string name="invite_by_sms">Invite friends by SMS</string>
     <string name="invite_by">Invite friends via...</string>
 
+    <string name="video_download"> Video Download</string>
+    <string name="video_message">Message</string>
+    <string name="video_comment">Comment</string>
+    <string name="mention">Mention</string>
+    <string name="blocked_accounts">Blocked Accounts</string>
+    <string name="allow_tags_from">Allow Tags From</string>
+
+    <string name="allow_comment_from">Allow Comment For</string>
+    <string name="hide_comment_section">Hide Comment Section</string>
+    <string name="allow_mention_from">Allow Mention From</string>
+    <string name="allow_tag_from">Allow Tag From</string>
+    <string name="every_one">Everyone</string>
+    <string name="no_one">No One</string>
+    <string name="people_you_follow">People You Follow</string>
+    <string name="people_follow_you">People Follow You </string>
+
 
 </resources>

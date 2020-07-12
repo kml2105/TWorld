@@ -54,6 +54,18 @@ public class SettingFragment extends RootFragment implements View.OnClickListene
             transaction.replace(R.id.Profile_F, followInviteFriendFragment).commit();
     }
 
+    public  void navigateToPrivacy(){
+        PrivacyFragment privacyFragment = new PrivacyFragment();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
+        transaction.addToBackStack(null);
+        View view=getActivity().findViewById(R.id.MainMenuFragment);
+        if(view!=null)
+            transaction.replace(R.id.MainMenuFragment, privacyFragment).commit();
+        else
+            transaction.replace(R.id.Profile_F, privacyFragment).commit();
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -74,7 +86,7 @@ public class SettingFragment extends RootFragment implements View.OnClickListene
                 break;
 
             case R.id.setting_ll_privacy:
-                
+                navigateToPrivacy();
                 break;
         }
     }
