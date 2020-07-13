@@ -42,16 +42,6 @@ public class Inbox_F extends RootFragment {
     View view;
     Context context;
 
-    RecyclerView inbox_list;
-
-    ArrayList<Inbox_Get_Set> inbox_arraylist;
-    DatabaseReference root_ref;
-
-    Inbox_Adapter inbox_adapter;
-
-    ProgressBar pbar;
-
-    boolean isview_created=false;
 
     public Inbox_F() {
         // Required empty public constructor
@@ -64,42 +54,7 @@ public class Inbox_F extends RootFragment {
         // Inflate the layout for this fragment
         view= inflater.inflate(R.layout.fragment_inbox, container, false);
         context=getContext();
-
-        root_ref= FirebaseDatabase.getInstance().getReference();
-
-
-        pbar=view.findViewById(R.id.pbar);
-        inbox_list=view.findViewById(R.id.inboxlist);
-
-        // intialize the arraylist and and inboxlist
-        inbox_arraylist=new ArrayList<>();
-
-        inbox_list = (RecyclerView) view.findViewById(R.id.inboxlist);
         LinearLayoutManager layout = new LinearLayoutManager(context);
-        inbox_list.setLayoutManager(layout);
-        inbox_list.setHasFixedSize(false);
-        inbox_adapter=new Inbox_Adapter(context, inbox_arraylist, new Inbox_Adapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Inbox_Get_Set item) {
-
-                // if user allow the stroage permission then we open the chat view
-                if(check_ReadStoragepermission())
-                chatFragment(item.getId(),item.getName(),item.getPic());
-
-
-            }
-        }, new Inbox_Adapter.OnLongItemClickListener() {
-            @Override
-            public void onLongItemClick(Inbox_Get_Set item) {
-
-            }
-        });
-
-        inbox_list.setAdapter(inbox_adapter);
-
-
-
-
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,9 +63,6 @@ public class Inbox_F extends RootFragment {
             }
         });
 
-
-
-        isview_created=true;
 
         return view;
     }
@@ -132,20 +84,20 @@ public class Inbox_F extends RootFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
-        if(view!=null) {
+      /*  if(view!=null) {
             if (Variables.sharedPreferences.getBoolean(Variables.islogin, false) && inbox_arraylist.isEmpty())
                 getData();
              }
 
+    }*/
     }
 
+        // on start we will get the Inbox Message of user  which is show in bottom list of third tab
+        ValueEventListener eventListener2;
 
+        Query inbox_query;
 
-    // on start we will get the Inbox Message of user  which is show in bottom list of third tab
-    ValueEventListener eventListener2;
-
-    Query inbox_query;
-    public void getData() {
+   /* public void getData() {
 
         pbar.setVisibility(View.VISIBLE);
 
@@ -183,7 +135,7 @@ public class Inbox_F extends RootFragment {
         inbox_query.addValueEventListener(eventListener2);
 
 
-    }
+    }*/
 
 
 

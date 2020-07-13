@@ -55,8 +55,8 @@
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
-            android:alpha="0.7"
             android:textSize="12sp"
+            android:enabled="true"
             android:background="@drawable/login_border"
             android:hint="@string/email_mobile_no"
             android:padding="10dp"
@@ -69,7 +69,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
-            android:alpha="0.7"
+            android:enabled="true"
             android:background="@drawable/login_border"
             android:hint="Password"
             android:textSize="12sp"
@@ -77,38 +77,6 @@
             android:padding="10dp"
             android:textColor="#fff"
             android:textColorHint="#fff" />
-
-        <RadioGroup
-            android:id="@+id/radioGrp"
-            android:layout_marginTop="10dp"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-            <RadioButton
-                android:id="@+id/radioM"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:checked="true"
-                android:drawableRight="@drawable/com_facebook_button_send_icon_blue"
-                android:layout_weight="1"
-                android:textSize="14dp"
-                android:text="Male"
-                />
-            <RadioButton
-                android:id="@+id/radioF"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:checked="false"
-                android:drawableRight="@drawable/com_facebook_button_send_icon_blue"
-                android:layout_weight="1"
-                android:textSize="14dp"
-                android:text="Female"
-                />
-        </RadioGroup>
-
 
         <Button
             android:id="@+id/btn_sign_up"

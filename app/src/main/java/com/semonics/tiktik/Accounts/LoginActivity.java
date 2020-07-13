@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import static com.semonics.tiktik.SimpleClasses.SessionManager.PREF_IS_LOGIN;
 import static com.semonics.tiktik.SimpleClasses.SessionManager.PREF_TOKEN;
+import static com.semonics.tiktik.SimpleClasses.Utils.methodToast;
 import static com.semonics.tiktik.SimpleClasses.WSParams.WS_KEY_TOKEN;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -46,11 +47,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnLogin.setOnClickListener(this);
     }
 
+    private void validation(){
+        if(etUserName.getText().toString().isEmpty()){
+            methodToast(LoginActivity.this,"Please enter user name.");
+        }else if(etPassword.getText().toString().isEmpty()){
+            methodToast(LoginActivity.this,"Please enter password.");
+        }else{
+            apiCall();
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.activity_log_in_btn_log_in:
-                apiCall();
+                validation();
                 break;
 
             case R.id.tv_sign_up:

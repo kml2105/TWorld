@@ -23,20 +23,19 @@ public class RetrofitBuilder {
      * Method to get webservice      *      * @return the instance of RetrofitInterface
      */
     public static APIInterface getWebService(String url) {
-        BASE_URL = BASE_URL + url;
         TicTic.getInstance().getSession().putString(SessionManager.PREF_BASE_URL, BASE_URL);
 
-        return getBuilder().build().create(APIInterface.class);
+        return getBuilder(url).build().create(APIInterface.class);
     }
 
     public static APIInterface getWebService() {
-        return getBuilder().build().create(APIInterface.class);
+        return getBuilder("").build().create(APIInterface.class);
     }
 
     /**
      * Method to get retofit builder object.      *      * @return object of the RetrofitBuilder
      */
-    public static Retrofit.Builder getBuilder() {
+    public static Retrofit.Builder getBuilder(String url) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.readTimeout(90, TimeUnit.SECONDS);
         httpClient.connectTimeout(90, TimeUnit.SECONDS);
@@ -54,7 +53,7 @@ public class RetrofitBuilder {
             }
         });
         Retrofit.Builder builder = new Retrofit.Builder();
-        builder.baseUrl(TicTic.getInstance().getSession().getString(BASE_URL)).client(httpClient.build());
+        builder.baseUrl(url).client(httpClient.build());
 
         return builder;
     }

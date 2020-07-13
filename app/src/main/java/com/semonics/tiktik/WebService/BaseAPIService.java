@@ -22,6 +22,7 @@ import static com.semonics.tiktik.SimpleClasses.Utils.dismissProgressDialog;
 import static com.semonics.tiktik.SimpleClasses.Utils.methodToast;
 import static com.semonics.tiktik.SimpleClasses.Utils.showLog;
 import static com.semonics.tiktik.SimpleClasses.Utils.showProgressDialog;
+import static com.semonics.tiktik.SimpleClasses.WSParams.WS_KEY_CODE;
 
 
 public class BaseAPIService {
@@ -73,7 +74,7 @@ public class BaseAPIService {
     private void processRequest(String serviceName, RequestBody body) {
         showLog(TAG_URL, TicTic.getInstance().getSession().getString(SessionManager.PREF_BASE_URL) + "/" + serviceName);
 
-        RetrofitBuilder.getWebService().doReqeust(serviceName, body).enqueue(new Callback<ResponseBody>() {
+        RetrofitBuilder.getWebService(TicTic.getInstance().getSession().getString(SessionManager.PREF_BASE_URL)).doReqeust(serviceName, body).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 dismissProgressDialog();
@@ -81,15 +82,16 @@ public class BaseAPIService {
                     if (response.code() == 200) {
                         String res = response.body().string();
                         JSONObject jsonObject = new JSONObject(res);
-                        int code = jsonObject.getInt("code");
+                        int code = jsonObject.getInt(WS_KEY_CODE);
                         if (code == 401) {
                             TicTic.getInstance().getSession().setBoolean(SessionManager.PREF_IS_LOGIN, false);
                             TicTic.getInstance().getSession().clearAllData();
                             Intent i = new Intent(context, LoginActivity.class);
                             context.startActivity(i);
+                        }else if(code ==200){
+                            responseListener.onSuccess(res);
                         }
                         showLog(TAG_RESPONSE, res);
-                        responseListener.onSuccess(res);
                     } else {
                         responseListener.onFailure(response.code() + "");
 //                        Utils.showDialogWithOption(context, R.mipmap.ic_launcher, context.getResources().getString(R.string.internet_connection_error), "", context.getResources().getString(R.string.ok), "", new DialogYesNoListener() {
