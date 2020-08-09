@@ -1,9 +1,11 @@
 package com.semonics.tiktik.Video_Recording;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
@@ -20,7 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
@@ -29,31 +31,47 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.semonics.tiktik.Accounts.LoginActivity;
 import com.semonics.tiktik.Main_Menu.MainMenuActivity;
 import com.semonics.tiktik.R;
 import com.semonics.tiktik.Services.ServiceCallback;
-import com.semonics.tiktik.Services.Upload_Service;
+import com.semonics.tiktik.Services.UploadVideoService;
 import com.semonics.tiktik.SimpleClasses.Functions;
+import com.semonics.tiktik.SimpleClasses.Utils;
 import com.semonics.tiktik.SimpleClasses.Variables;
+import com.semonics.tiktik.WebService.BaseAPIService;
+import com.semonics.tiktik.WebService.ResponseListener;
+
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_UPLOAD_DOC;
 
 public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
-
     ImageView video_thumbnail;
-
+    private String compressVideoFilePath;
     String video_path;
-
+    private static final float maxImageSize = 500;
     ProgressDialog progressDialog;
 
     ServiceCallback serviceCallback;
 
     int AUTOCOMPLETE_REQUEST_CODE = 0;
-
+    LocalBroadcastManager lbm;
     EditText description_edit;
     TextView tvEventLocation;
+    int videoDuration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +80,8 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
         video_path = Variables.output_filter_file;
         video_thumbnail = findViewById(R.id.video_thumbnail);
         tvEventLocation = findViewById(R.id.tv_select_place);
+        lbm = LocalBroadcastManager.getInstance(this);
+        lbm.registerReceiver(receiver, new IntentFilter("FFMPEG_COMPLETE"));
         /*tvEventLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,10 +127,89 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
         }
     });
-
-
-
 }
+
+    /**
+     * @return video thumbnail byte array to upload on server.
+     */
+    private byte[] getBytes() {
+        Bitmap mBitmap = ThumbnailUtils.createVideoThumbnail(compressVideoFilePath, MediaStore.Images.Thumbnails.MINI_KIND);
+        ByteArrayOutputStream mStream = new ByteArrayOutputStream();
+
+        float ratio = Math.min(maxImageSize / mBitmap.getWidth(), maxImageSize / mBitmap.getHeight());
+        int width = Math.round(ratio * mBitmap.getWidth());
+        int height = Math.round(ratio * mBitmap.getHeight());
+
+        Bitmap thumbnailBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, true);
+        thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 70, mStream);
+        mBitmap.recycle();
+        return mStream.toByteArray();
+    }
+    private void callWSForPreUploadS3() {
+        try {
+            File fileToPass = null;
+            RequestBody requestFile;
+            MultipartBody.Part multipartBody = null;
+            try {
+                fileToPass = new File(compressVideoFilePath);
+                requestFile = RequestBody.create(MediaType.parse("image/png"), getBytes());
+                multipartBody = MultipartBody.Part.createFormData("video_thumbnail", fileToPass.getName().replace(".mp4", ".png"), requestFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            RequestBody videoNameBody = RequestBody.create(MediaType.parse("text/plain"), fileToPass.getName());
+            RequestBody descBody = RequestBody.create(MediaType.parse("text/plain"), description_edit.getText().toString().trim());
+          //  RequestBody tagBody = RequestBody.create(MediaType.parse("text/plain"), tags);
+            RequestBody durationBody = RequestBody.create(MediaType.parse("text/plain"), videoDuration + "");
+            RequestBody sizeBody = RequestBody.create(MediaType.parse("text/plain"), "5");
+
+
+            HashMap<String, RequestBody> map = new HashMap<>();
+            map.put("video_name", videoNameBody);
+            map.put("description", descBody);
+          //  map.put("tags", tagBody);
+            map.put("duration", durationBody);
+            map.put("size", sizeBody);
+
+//            Utility.printRequestLog(videoJson.toString());
+            new BaseAPIService(this, SERVICE_UPLOAD_DOC, multipartBody, map, responseListener);
+            //, , this,true,this, "POST",true,true
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    ResponseListener responseListener = new ResponseListener() {
+        @Override
+        public void onSuccess(String res) {
+            try {
+                JSONObject jsonObject = new JSONObject(res);
+                // int code = jsonObject.getInt(API_CODE);
+                // String msg = jsonObject.getString(API_MSG);
+                //if (code == 200) {
+               /* } else {
+                    methodToast(context, msg);
+                }*/
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(String error) {
+            Utils.methodToast(Post_Video_A.this, error);
+        }
+    };
+
+    public BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null) {
+                callWSForPreUploadS3();
+            }
+        }
+    };
     public void autoCompletePlace(View view) {
 
         // Initialize Places.
@@ -155,16 +254,22 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
         serviceCallback=this;
 
-        Upload_Service mService = new Upload_Service(serviceCallback);
+        /*PublicVideoVO publicVideoVO = s3UploadFailedList.get(i);
+                Intent serviceIntent = new Intent(FeedActivity.this, UploadVideoService.class);
+                serviceIntent.putExtra("serverVideoId", publicVideoVO.getVideoId());
+                serviceIntent.putExtra(UploadVideoService.EXTRA_VIDEO_PATH, publicVideoVO.getLocalVideoPath());
+                startService(serviceIntent);*/
+        UploadVideoService mService = new UploadVideoService();
         if (!Functions.isMyServiceRunning(this,mService.getClass())) {
             Intent mServiceIntent = new Intent(this.getApplicationContext(), mService.getClass());
             mServiceIntent.setAction("startservice");
             mServiceIntent.putExtra("uri",""+ Uri.fromFile(new File(video_path)));
             mServiceIntent.putExtra("desc",""+description_edit.getText().toString());
+            mServiceIntent.putExtra("duration",videoDuration);
+            mServiceIntent.putExtra(UploadVideoService.EXTRA_VIDEO_PATH,  Uri.fromFile(new File(video_path)));
             startService(mServiceIntent);
 
-
-            Intent intent = new Intent(this, Upload_Service.class);
+            Intent intent = new Intent(this, UploadVideoService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
         }
@@ -213,17 +318,17 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
 
     // this is importance for binding the service to the activity
-    Upload_Service mService;
+    UploadVideoService mService;
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
 
-           Upload_Service.LocalBinder binder = (Upload_Service.LocalBinder) service;
+           UploadVideoService.LocalBinder binder = (UploadVideoService.LocalBinder) service;
             mService = binder.getService();
 
-            mService.setCallbacks(Post_Video_A.this);
+           // mService.setCallbacks(Post_Video_A.this);
 
 
 
@@ -247,15 +352,13 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
         serviceCallback=this;
 
-        Upload_Service mService = new Upload_Service(serviceCallback);
+        UploadVideoService mService = new UploadVideoService();
 
         if (Functions.isMyServiceRunning(this,mService.getClass())) {
             Intent mServiceIntent = new Intent(this.getApplicationContext(), mService.getClass());
             mServiceIntent.setAction("stopservice");
             startService(mServiceIntent);
-
         }
-
 
     }
 

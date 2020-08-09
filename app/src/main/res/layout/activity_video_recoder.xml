@@ -94,7 +94,7 @@
                 android:scaleType="fitCenter"
                 android:id="@+id/rotate_camera"
                 android:background="@color/transparent"
-                android:src="@drawable/ic_rotate_cam"/>
+                android:src="@drawable/ic_rotate_cam_white"/>
 
             <ImageButton
                 android:layout_width="40dp"
@@ -104,7 +104,7 @@
                 android:scaleType="fitCenter"
                 android:id="@+id/flash_camera"
                 android:background="@color/transparent"
-                android:src="@drawable/ic_flash_on"/>
+                android:src="@drawable/ic_flash_on_white"/>
 
             <ImageButton
                 android:layout_width="40dp"
@@ -114,7 +114,7 @@
                 android:scaleType="fitCenter"
                 android:id="@+id/timer"
                 android:background="@color/transparent"
-                android:src="@drawable/ic_video"/>
+                android:src="@drawable/ic_timer_white"/>
 
             <ImageButton
                 android:layout_width="40dp"
@@ -124,7 +124,7 @@
                 android:scaleType="fitCenter"
                 android:id="@+id/beauty"
                 android:background="@color/transparent"
-                android:src="@drawable/ic_profile_gray"/>
+                android:src="@drawable/ic_beauty_white"/>
         </LinearLayout>
 
         <RelativeLayout
@@ -146,8 +146,9 @@
 
                 <ImageView
                     android:layout_width="32dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_gallery_icon"/>
+                    android:src="@drawable/ic_gallary_white"/>
 
                 <TextView
                     android:layout_width="wrap_content"

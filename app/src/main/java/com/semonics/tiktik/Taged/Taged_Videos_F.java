@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,20 +18,16 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.semonics.tiktik.Home.Home_Get_Set;
+import com.semonics.tiktik.Home.HomeModel;
 import com.semonics.tiktik.Main_Menu.MainMenuActivity;
 import com.semonics.tiktik.Main_Menu.RelateToFragment_OnBack.RootFragment;
 import com.semonics.tiktik.Profile.MyVideos_Adapter;
 import com.semonics.tiktik.R;
-import com.semonics.tiktik.SimpleClasses.ApiRequest;
-import com.semonics.tiktik.SimpleClasses.Callback;
 import com.semonics.tiktik.SimpleClasses.Functions;
 import com.semonics.tiktik.SimpleClasses.Variables;
 import com.semonics.tiktik.WatchVideos.WatchVideos_F;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +51,7 @@ public class Taged_Videos_F extends RootFragment {
 
 
     RecyclerView recyclerView;
-    ArrayList<Home_Get_Set> data_list;
+    ArrayList<HomeModel> data_list;
     MyVideos_Adapter adapter;
 
     String tag_txt;
@@ -171,7 +167,7 @@ public class Taged_Videos_F extends RootFragment {
         data_list=new ArrayList<>();
         adapter=new MyVideos_Adapter(context, data_list, new MyVideos_Adapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int postion,Home_Get_Set item, View view) {
+            public void onItemClick(int postion, HomeModel item, View view) {
 
                 OpenWatchVideo(postion);
 
@@ -214,18 +210,18 @@ public class Taged_Videos_F extends RootFragment {
             e.printStackTrace();
         }
 
-        ApiRequest.Call_Api(context, Variables.SearchByHashTag, parameters, new Callback() {
+        /*ApiRequest.Call_Api(context, Variables.SearchByHashTag, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 progress_bar.setVisibility(View.GONE);
-                Parse_data(resp);
+                //Parse_data(resp);
             }
-        });
+        });*/
 
 
     }
 
-    public void Parse_data(String responce){
+   /* public void Parse_data(String responce){
 
         data_list.clear();
 
@@ -287,7 +283,7 @@ public class Taged_Videos_F extends RootFragment {
             e.printStackTrace();
         }
 
-    }
+    }*/
 
     @Override
     public void onDetach() {

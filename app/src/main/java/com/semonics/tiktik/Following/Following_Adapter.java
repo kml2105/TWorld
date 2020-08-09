@@ -105,45 +105,39 @@ public class Following_Adapter extends RecyclerView.Adapter<Following_Adapter.Cu
 
         Picasso.with(context)
                 .load(item.profile_pic)
-                .placeholder(R.drawable.profile_image_placeholder)
+                .placeholder(R.drawable.user_profile)
                 .into(holder.user_image);
 
         holder.user_id.setText(item.username);
 
-        if(item.is_show_follow_unfollow_btn) {
-            holder.action_txt.setVisibility(View.VISIBLE);
+        holder.action_txt.setVisibility(View.VISIBLE);
 
-            if (following_or_fans.equals("following")) {
+        if (following_or_fans.equals("following")) {
 
-                if (item.follow.equals("0")) {
-                    holder.action_txt.setText("Follow");
-                    holder.action_txt.setBackgroundColor(ContextCompat.getColor(context, R.color.redcolor));
-                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.white));
-                }
-
-                else {
-                    holder.action_txt.setText("UnFollow");
-                    holder.action_txt.setBackground(ContextCompat.getDrawable(context, R.drawable.d_gray_border));
-                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.black));
-                }
-
-
-            } else {
-
-                if (item.follow.equals("0")) {
-                    holder.action_txt.setText("Follow");
-                    holder.action_txt.setBackgroundColor(ContextCompat.getColor(context, R.color.redcolor));
-                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.white));
-                } else {
-                    holder.action_txt.setText("Friends");
-                    holder.action_txt.setBackground(ContextCompat.getDrawable(context, R.drawable.d_gray_border));
-                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.black));
-                }
+            if (item.follow.equals("0")) {
+                holder.action_txt.setText("Follow");
+                holder.action_txt.setBackgroundColor(ContextCompat.getColor(context, R.color.redcolor));
+                holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.white));
             }
 
-        }
-        else {
-            holder.action_txt.setVisibility(View.GONE);
+            else {
+                holder.action_txt.setText("UnFollow");
+                holder.action_txt.setBackground(ContextCompat.getDrawable(context, R.drawable.d_gray_border));
+                holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.black));
+            }
+
+
+        } else {
+
+            if (item.follow.equals("0")) {
+                holder.action_txt.setText("Follow");
+                holder.action_txt.setBackgroundColor(ContextCompat.getColor(context, R.color.redcolor));
+                holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.white));
+            } else {
+                holder.action_txt.setText("Friends");
+                holder.action_txt.setBackground(ContextCompat.getDrawable(context, R.drawable.d_gray_border));
+                holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.black));
+            }
         }
 
         holder.bind(i,datalist.get(i),listener);

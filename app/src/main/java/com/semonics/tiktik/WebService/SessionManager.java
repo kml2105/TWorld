@@ -1,19 +1,10 @@
-package com.semonics.tiktik.SimpleClasses;
+package com.semonics.tiktik.WebService;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.google.gson.Gson;
-import com.semonics.tiktik.Accounts.LoginActivity;
-import com.semonics.tiktik.R;
-import com.semonics.tiktik.SplashActivity;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-
-import static com.semonics.tiktik.SimpleClasses.WSParams.IS_LOGIN;
+import static com.semonics.tiktik.WebService.WSParams.IS_LOGIN;
 
 public class SessionManager {     /*Shared Preferences*/
     SharedPreferences pref;     /*Editor for Shared preferences*/
@@ -23,15 +14,30 @@ public class SessionManager {     /*Shared Preferences*/
     public static final String PREF_NAME = "tworld";
     public static final String PREF_TOKEN = "token";
     public static final String PREF_IS_LOGIN = "isLogIn";
+    public static final String PREF_USER_ID = "user_id";
     public static final String PREF_BASE_URL = "base_url";
-
+    public static final String PREF_COMMENT = "comment";
+    public static final String PREF_COMMENT_NOTI = "comment_noti";
+    public static final String PREF_DIRECT_MSG = "direct_msg";
+    public static final String PREF_DIRECT_MSG_NOTI = "direct_msg_noti";
+    public static final String PREF_DOWNLOAD_VIDEO = "download_video";
+    public static final String PREF_FOLLOWERS_VIDEO_NOTI = "followers_video_noti";
+    public static final String PREF_NEW_FOLLOWERS_VIDEO_NOTI = "new_followers_video_noti";
+    public static final String PREF_LIKES = "likes";
+    public static final String PREF_MENTION = "mentions";
+    public static final String PREF_LIKES_NOTI = "likes_noti";
+    public static final String PREF_MENTION_NOTI = "mention_noti";
+    public static final String PREF_SAVE_LOGIN_INFO = "save_login_info";
+    public static final String PREF_LIKE_COUNT = "like_count";
+    public static final String PREF_SEARCH_KEYWORD = "keyword";
+    public static final String PREF_PRIVATE_ACC= "private_acc";
     public SessionManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
     }
 
-   /* public void setRegistrationDetail(String mobileNo, String password, String deviceId) {         *//*Storing login value as TRUE*//*
+    /* public void setRegistrationDetail(String mobileNo, String password, String deviceId) {         *//*Storing login value as TRUE*//*
         editor.putBoolean(IS_LOGIN, true);
         editor.putString(MOBILE_NO, mobileNo);
         editor.putString(PASSWORD, password);
@@ -80,12 +86,22 @@ public class SessionManager {     /*Shared Preferences*/
         editor.remove(PREF_IS_LOGIN);
         editor.remove(PREF_TOKEN);
         editor.remove(PREF_NAME);
+        editor.remove(PREF_LIKES);
+        editor.remove(PREF_SEARCH_KEYWORD);
+        editor.remove(PREF_LIKE_COUNT);
+        editor.remove(PREF_SAVE_LOGIN_INFO);
+        editor.remove(PREF_MENTION_NOTI);
+        editor.remove(PREF_LIKES_NOTI);
+        editor.remove(PREF_NEW_FOLLOWERS_VIDEO_NOTI);
+        editor.remove(PREF_USER_ID);
+        editor.remove(PREF_FOLLOWERS_VIDEO_NOTI);
+        editor.remove(PREF_NEW_FOLLOWERS_VIDEO_NOTI);
+        editor.remove(PREF_COMMENT);
         editor.apply();
-        TicTic.getInstance().getSession().setBoolean(PREF_IS_LOGIN,false);
+        TicTic.getInstance().getSession().setBoolean(PREF_IS_LOGIN, false);
         //_context.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-       // _context.finish();
+        // _context.finish();
     }
-
 
 
     /**

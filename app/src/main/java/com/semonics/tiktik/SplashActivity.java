@@ -9,11 +9,11 @@ import android.view.WindowManager;
 
 import com.semonics.tiktik.Accounts.LoginActivity;
 import com.semonics.tiktik.Main_Menu.MainMenuActivity;
-import com.semonics.tiktik.SimpleClasses.SessionManager;
-import com.semonics.tiktik.SimpleClasses.TicTic;
+import com.semonics.tiktik.WebService.SessionManager;
+import com.semonics.tiktik.WebService.TicTic;
 import com.semonics.tiktik.SimpleClasses.Variables;
 
-import static com.semonics.tiktik.SimpleClasses.SessionManager.PREF_IS_LOGIN;
+import static com.semonics.tiktik.WebService.SessionManager.PREF_IS_LOGIN;
 import static com.semonics.tiktik.SimpleClasses.Utils.showLog;
 
 public class SplashActivity extends AppCompatActivity {
@@ -39,7 +39,6 @@ public class SplashActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                TicTic.getInstance().getSession().setBoolean(PREF_IS_LOGIN,true);
                 if(TicTic.getInstance().getSession().getBoolean(SessionManager.PREF_IS_LOGIN)){
                     showLog("token:",TicTic.getInstance().getSession().getString(SessionManager.PREF_TOKEN));
                     Intent i = new Intent(SplashActivity.this, MainMenuActivity.class);

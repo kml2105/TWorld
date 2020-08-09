@@ -5,4 +5,6 @@ package com.semonics.tiktik.Notifications;
  */
 
 public class Notification_Get_Set {
+    public String userID,username,first_name,last_name,profile_pic;
 }
+

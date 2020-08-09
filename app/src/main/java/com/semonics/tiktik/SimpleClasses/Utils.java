@@ -5,13 +5,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.semonics.tiktik.R;
+import com.semonics.tiktik.WebService.SessionManager;
+import com.semonics.tiktik.WebService.TicTic;
+import com.semonics.tiktik.WebService.WSParams;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,6 +27,7 @@ import static com.semonics.tiktik.WebService.BaseAPIService.TAG_EXCEPTION;
 
 public class Utils {
     static ProgressDialog pd;
+
     /**
      * Method to show anything in log      *      * @param tag     is the representation of exception      * @param message is the exception cause
      */
@@ -34,6 +39,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Method to show anything in log      *      * @param context context of class      * @param text    msg display on toast
+     */
+    public static String getDeviceId(final Context mContext) {
+        return Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
     /**
      * Method to show anything in log      *      * @param context context of class      * @param text    msg display on toast
      */
@@ -78,7 +89,7 @@ public class Utils {
         try {
             headersMap.put("Content-Type", "application/json");
             headersMap.put("app-type", "petrocard_pos");
-            String authKey = TicTic.getInstance().getSession().getString(WSParams.WS_KEY_TOKEN);
+            String authKey = TicTic.getInstance().getSession().getString(SessionManager.PREF_TOKEN);
             if (authKey != null && !authKey.isEmpty()) {
                 headersMap.put("Authorization", authKey);
                 showLog("auth_key : ", authKey);
@@ -86,10 +97,11 @@ public class Utils {
             String str = headersMap.toString();
             showLog("Headers : ", str);
         } catch (Exception e) {
-           showLog("e",e.toString());
+            showLog("e", e.toString());
         }
         return headersMap;
     }
+
     public static void showProgressDialog(Context context) {
         try {
             pd = new ProgressDialog(context, R.style.MyTheme);
@@ -99,16 +111,17 @@ public class Utils {
                 pd.show();
             }
         } catch (Exception e) {
-            showLog(TAG_EXCEPTION,e.toString());
+            showLog(TAG_EXCEPTION, e.toString());
         }
     }
+
     public static void dismissProgressDialog() {
         try {
             if (pd != null && pd.isShowing()) {
                 pd.dismiss();
             }
         } catch (Exception e) {
-            showLog(TAG_EXCEPTION,e.toString());
+            showLog(TAG_EXCEPTION, e.toString());
         }
     }
 

@@ -168,13 +168,13 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
 
         Log.d("resp",parameters.toString());
 
-        ApiRequest.Call_Api(context, Variables.allSounds, parameters, new Callback() {
+      /*  ApiRequest.Call_Api(context, Variables.allSounds, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 swiperefresh.setRefreshing(false);
                 Parse_data(resp);
             }
-        });
+        });*/
 
 
     }
@@ -435,13 +435,13 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
             e.printStackTrace();
         }
 
-        ApiRequest.Call_Api(context, Variables.fav_sound, parameters, new Callback() {
+     /*   ApiRequest.Call_Api(context, Variables.fav_sound, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 iosDialog.cancel();
             }
         });
-
+*/
     }
 
 

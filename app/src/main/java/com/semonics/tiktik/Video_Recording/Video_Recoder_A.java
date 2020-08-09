@@ -134,6 +134,8 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
             public void onClick(View v) {
                 rlNormalView.setVisibility(View.GONE);
                 rlTimerView.setVisibility(View.VISIBLE);
+                ivTimer.setImageDrawable(getDrawable(R.drawable.ic_timer));
+                rotate_camera.setImageDrawable(getDrawable(R.drawable.ic_rotate_cam));
 
                 new CountDownTimer(10000, 1000) {
                     public void onTick(long millisUntilFinished) {
@@ -143,6 +145,8 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
                     public void onFinish() {
                         tvTimer.setText("0");
                         rlNormalView.setVisibility(View.VISIBLE);
+                        ivTimer.setImageDrawable(getDrawable(R.drawable.ic_timer_white));
+                        rotate_camera.setImageDrawable(getDrawable(R.drawable.ic_rotate_cam_white));
                         rlTimerView.setVisibility(View.GONE);
                             Start_or_Stop_Recording();
                     }
@@ -606,6 +610,7 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
     public void Go_To_preview_Activity(){
         Intent intent =new Intent(this,Preview_Video_A.class);
+        intent.putExtra("videoDuration", sec_passed);
         startActivity(intent);
         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
     }

@@ -31,6 +31,8 @@ import com.semonics.tiktik.SimpleClasses.Fragment_Callback;
 import java.util.Collections;
 import java.util.List;
 
+import static com.semonics.tiktik.WebService.WSParams.BASE_URL;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -155,7 +157,7 @@ public class VideoAction_F extends BottomSheetDialogFragment implements View.OnC
 
             Intent intent = new Intent(android.content.Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, Variables.base_url+"view.php?id="+video_id);
+            intent.putExtra(Intent.EXTRA_TEXT, BASE_URL+"view.php?id="+video_id);
             intent.setComponent(name);
             startActivity(intent);
         }catch (Exception e){

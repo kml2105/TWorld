@@ -1,18 +1,20 @@
 package com.semonics.tiktik.WebService;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 
 import com.semonics.tiktik.Accounts.LoginActivity;
-import com.semonics.tiktik.SimpleClasses.SessionManager;
-import com.semonics.tiktik.SimpleClasses.TicTic;
+import com.semonics.tiktik.R;
 import com.semonics.tiktik.SimpleClasses.Utils;
-import com.semonics.tiktik.SimpleClasses.WSParams;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
+import okhttp3.Headers;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -22,7 +24,13 @@ import static com.semonics.tiktik.SimpleClasses.Utils.dismissProgressDialog;
 import static com.semonics.tiktik.SimpleClasses.Utils.methodToast;
 import static com.semonics.tiktik.SimpleClasses.Utils.showLog;
 import static com.semonics.tiktik.SimpleClasses.Utils.showProgressDialog;
-import static com.semonics.tiktik.SimpleClasses.WSParams.WS_KEY_CODE;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_ALL_LIKED_VIDEO;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_ALL_VIDEO;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_GET_DOC_FOR_YOU;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_SEARCH_VIDEO;
+import static com.semonics.tiktik.WebService.WSParams.WS_KEY_BEARER;
+import static com.semonics.tiktik.WebService.WSParams.WS_KEY_CODE;
+import static com.semonics.tiktik.WebService.WSParams.WS_KEY_TOKEN;
 
 
 public class BaseAPIService {
@@ -38,145 +46,154 @@ public class BaseAPIService {
     public static final String TAG_REQUEST = "Request";
     public static final String TAG_URL = "Url";
     public static final String TAG_RESPONSE = "Response";
+    SessionManager sessionManager;
 
     /**
      * This is the constructor of the class      *      * @param context          of the class      * @param serviceName      name of the service      * @param body             request body of data      * @param responseListener is the listener of response      * @param isShowProgress   decides whether show progress bar or not
      */
-    public BaseAPIService(final Context context, String serviceName, RequestBody body, ResponseListener responseListener, boolean isShowProgress) {
+    public BaseAPIService(final Context context, String module, RequestBody requestBody, boolean isHeader, ResponseListener responseListener, String apiMethodType, boolean isShowProgress) {
         this.context = context;
+        sessionManager = TicTic.getInstance().getSession();
         this.responseListener = responseListener;
         this.isShowProgress = isShowProgress;
         if (Utils.isNetworkAvailable(this.context)) {
-            if (this.isShowProgress) {
-                showProgressDialog(this.context);
+            showLog("URL", module);
+            if (isShowProgress) {
+                showProgressDialog(context);
             }
-            if (body == null) {
-                processRequest(serviceName);
-            } else {
-                processRequest(serviceName, body);
-            }
+            processRequest(module, requestBody, isHeader, context, apiMethodType);
         } else {
-
-//            Utils.showDialogWithOption(context, R.mipmap.ic_launcher, context.getResources().getString(R.string.internet_connection_error), "", context.getResources().getString(R.string.ok), "", new DialogYesNoListener() {
-//                @Override
-//                public void onClickYes() {
-//
-//                }
-//
-//                @Override
-//                public void onClickNo() {
-//
-//                }
-//            });
+            responseListener.onFailure(context.getResources().getString(R.string.no_internet_connection));
         }
     }
 
-    private void processRequest(String serviceName, RequestBody body) {
-        showLog(TAG_URL, TicTic.getInstance().getSession().getString(SessionManager.PREF_BASE_URL) + "/" + serviceName);
-
-        RetrofitBuilder.getWebService(TicTic.getInstance().getSession().getString(SessionManager.PREF_BASE_URL)).doReqeust(serviceName, body).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                dismissProgressDialog();
-                try {
-                    if (response.code() == 200) {
-                        String res = response.body().string();
-                        JSONObject jsonObject = new JSONObject(res);
-                        int code = jsonObject.getInt(WS_KEY_CODE);
-                        if (code == 401) {
-                            TicTic.getInstance().getSession().setBoolean(SessionManager.PREF_IS_LOGIN, false);
-                            TicTic.getInstance().getSession().clearAllData();
-                            Intent i = new Intent(context, LoginActivity.class);
-                            context.startActivity(i);
-                        }else if(code ==200){
-                            responseListener.onSuccess(res);
-                        }
-                        showLog(TAG_RESPONSE, res);
-                    } else {
-                        responseListener.onFailure(response.code() + "");
-//                        Utils.showDialogWithOption(context, R.mipmap.ic_launcher, context.getResources().getString(R.string.internet_connection_error), "", context.getResources().getString(R.string.ok), "", new DialogYesNoListener() {
-//                            @Override
-//                            public void onClickYes() {
-//
-//                            }
-//
-//                            @Override
-//                            public void onClickNo() {
-//
-//                            }
-//                        });
-                    }
-                } catch (Exception e) {
-                    showLog(TAG_EXCEPTION,e.toString());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                dismissProgressDialog();
-                try {
-                    showLog(TAG_EXCEPTION, t.getMessage());
-                    responseListener.onFailure(t.getMessage());
-                } catch (Exception e) {
-                    showLog(TAG_EXCEPTION,e.toString());
-                }
-            }
-        });
+    public BaseAPIService(final Context context, String module, MultipartBody.Part multipartBody, HashMap<String, RequestBody> requestBody, ResponseListener responseListener) {
+        this.context = context;
+        sessionManager = TicTic.getInstance().getSession();
+        this.responseListener = responseListener;
+        if (Utils.isNetworkAvailable(this.context)) {
+            showLog("URL", module);
+            processMultiPartRequest(module, multipartBody, requestBody);
+        } else {
+            responseListener.onFailure(context.getResources().getString(R.string.no_internet_connection));
+        }
     }
 
-    private void processRequest(String serviceName) {
-        showLog(TAG_URL, TicTic.getInstance().getSession().getString(SessionManager.PREF_BASE_URL) + "/" + serviceName);
-        RetrofitBuilder.getWebService().doRequestWithoutBody(serviceName).enqueue(new Callback<ResponseBody>() {
+    private void processRequest(final String module, final RequestBody requestBody, final boolean isHeader, final Context context, final String apiMethodType) {
+//        showLog(TAG_REQUEST, TAG_URL + serviceName);
+        String token = "";
+        token = WS_KEY_BEARER + sessionManager.getString(SessionManager.PREF_TOKEN);
+        showLog("token req", token);
+        Call<ResponseBody> call = null;
+        switch (apiMethodType) {
+            case "POST":
+                if (isHeader) {
+                    showLog("token", token);
+                    call = RetrofitBuilder.getWebService().doRequestPostWithHeader(token, module, requestBody);
+                } else {
+                    call = RetrofitBuilder.getWebService().doRequestPost(module, requestBody);
+                }
+                break;
+            case "GET":
+                if (module.equals(SERVICE_GET_DOC_FOR_YOU) || module.contains(SERVICE_ALL_VIDEO) || module.contains(SERVICE_ALL_LIKED_VIDEO)) {
+                    call = RetrofitBuilder.getWebService().doRequestGetWithPagination(token, module, 0, 10);
+                } else if (module.contains(SERVICE_SEARCH_VIDEO)) {
+                    String keyword = sessionManager.getString(SessionManager.PREF_SEARCH_KEYWORD);
+                    call = RetrofitBuilder.getWebService().doRequestGetForSearchWithPagination(token, module, keyword, 0, 10);
+                } else {
+                    call = RetrofitBuilder.getWebService().doRequestGet(token, module);
+                }
+                break;
+            case "DELETE":
+                call = RetrofitBuilder.getWebService().doRequestDelete(token, module);
+                break;
+        }
+
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 dismissProgressDialog();
                 try {
                     if (response.code() == 200) {
                         String res = response.body().string();
-                        JSONObject jsonObject = new JSONObject(res);
-                        int code = jsonObject.getInt("API_CODE");
-                        if (code == 401) {
-                            TicTic.getInstance().getSession().setBoolean(SessionManager.PREF_IS_LOGIN, false);
-                            TicTic.getInstance().getSession().clearAllData();
-                            Intent i = new Intent(context, LoginActivity.class);
-                            context.startActivity(i);
-                        }
-                        showLog(TAG_RESPONSE, res);
                         responseListener.onSuccess(res);
-                    } else {
-                        methodToast(context, "No Internet Connection!!");
-
-//                        Utils.showDialogWithOption(context, R.mipmap.ic_launcher, context.getResources().getString(R.string.internet_connection_error), "", context.getResources().getString(R.string.ok), "", new DialogYesNoListener() {
-//                            @Override
-//                            public void onClickYes() {
-//
-//                            }
-//
-//                            @Override
-//                            public void onClickNo() {
-//
-//                            }
-//                        });
+                        showLog(TAG_RESPONSE, res);
+                    } else if (response.code() == 401) {
+                        TicTic.getInstance().getSession().setBoolean(SessionManager.PREF_IS_LOGIN, false);
+                        TicTic.getInstance().getSession().clearAllData();
+                        Intent i = new Intent(context, LoginActivity.class);
+                        context.startActivity(i);
+                    } else if (response.code() == 500) {
+                        methodToast(context, "Internal Server error.");
                     }
                 } catch (Exception e) {
-                    showLog(TAG_EXCEPTION,e.toString());
+                    showLog(TAG_EXCEPTION, e.toString());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-               dismissProgressDialog();
+                dismissProgressDialog();
                 try {
                     showLog(TAG_EXCEPTION, t.getMessage());
                     responseListener.onFailure(t.getMessage());
                 } catch (Exception e) {
-                    showLog(TAG_EXCEPTION,e.toString());
+                    showLog(TAG_EXCEPTION, e.toString());
                 }
             }
         });
     }
 
 
+    private void processMultiPartRequest(final String module, MultipartBody.Part multipartBody, HashMap<String, RequestBody> requestBody) {
+        String token = "";
+        Call<ResponseBody> call = null;
+        token = WS_KEY_BEARER + sessionManager.getString(SessionManager.PREF_TOKEN);
+        showLog("token", token);
+        call = RetrofitBuilder.getWebService().postVideoThumbnail(token, module, requestBody, multipartBody);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                dismissProgressDialog();
+                try {
+                    if (response.code() == 200) {
+                        String res = response.body().string();
+                        responseListener.onSuccess(res);
+                        showLog("Response:", res);
+                    } else if (response.code() == 401) {
+                        TicTic.getInstance().getSession().setBoolean(SessionManager.PREF_IS_LOGIN, false);
+                        TicTic.getInstance().getSession().clearAllData();
+                        Intent i = new Intent(context, LoginActivity.class);
+                        context.startActivity(i);
+                    } else {
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(response.errorBody().string());
+                            String userMessage = jsonObject.getString("message");
+                            Utils.methodToast(context, userMessage);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (Exception e) {
+                    showLog(TAG_EXCEPTION, e.toString());
+                    ;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                dismissProgressDialog();
+                try {
+                    showLog(TAG_EXCEPTION, t.getMessage());
+                    responseListener.onFailure(t.getMessage());
+                } catch (Exception e) {
+//                    showLogException(e);
+                }
+            }
+        });
+    }
 
 
 }

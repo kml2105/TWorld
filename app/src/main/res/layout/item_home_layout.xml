@@ -50,7 +50,7 @@
                         android:layout_height="50dp"
                         android:scaleType="centerCrop"
                         android:id="@+id/user_pic"
-                        android:src="@drawable/profile_image_placeholder"/>
+                        android:src="@drawable/user_profile"/>
 
                 </LinearLayout>
 
@@ -67,12 +67,11 @@
                         android:layout_width="32dp"
                         android:layout_height="37dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_like" />
+                        android:src="@drawable/ic_tap_to_like" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="likes"
                         android:id="@+id/like_txt"
                         android:shadowColor="@color/black"
                         android:shadowDx="1"
@@ -98,12 +97,11 @@
                         android:layout_height="32dp"
                         android:scaleType="fitCenter"
                         android:id="@+id/comment_image"
-                        android:src="@drawable/ic_comment"/>
+                        android:src="@drawable/ic_tap_to_comment"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="comment"
                         android:textSize="13dp"
                         android:id="@+id/comment_txt"
                         android:shadowColor="@color/black"
@@ -113,8 +111,6 @@
                         android:textColor="@color/white"
                         android:textStyle="bold"/>
                 </LinearLayout>
-
-
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -141,6 +137,37 @@
                         android:textSize="13dp"
                         android:textColor="@color/white"
                         android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/mute_layout"
+                    android:visibility="gone"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="20dp">
+
+                    <ImageView
+                        android:id="@+id/mute_video"
+                        android:layout_width="32dp"
+                        android:layout_height="37dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_like" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mute"
+                        android:id="@+id/mute_text"
+                        android:shadowColor="@color/black"
+                        android:shadowDx="1"
+                        android:shadowDy="1"
+                        android:shadowRadius="3"
+                        android:textSize="13dp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"/>
+
                 </LinearLayout>
 
             </LinearLayout>

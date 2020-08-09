@@ -22,7 +22,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/profile_image_placeholder"
+            android:src="@drawable/user_profile"
             android:id="@+id/user_pic"/>
         <RelativeLayout
             android:layout_width="match_parent"

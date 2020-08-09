@@ -86,10 +86,9 @@ public class Variables {
     public static String privacy_policy="https://www.termsfeed.com/privacy-policy/4dec1a564a01ea0d15ed86c97c4e8253";
 
     
-    public static String base_url="http://18.188.113.192:80/";
-    public static String domain="http://18.188.113.192:80/";
+    //public static String base_url="http://18.188.113.192:80/";
 
-    public static String SignUpAPI = base_url+"user";
+  /*  public static String SignUpAPI = base_url+"user";
     public static String logInAPI = base_url + "authenticate";
     public static String uploadVideoAPI =domain+"document";
     public static String videoForFollowingAPI =domain+"document/following";
@@ -114,6 +113,6 @@ public class Variables {
     public static String SearchByHashTag=domain+"SearchByHashTag";
     public static String sendPushNotification=domain+"sendPushNotification";
     public static String uploadImage=domain+"uploadImage";
-    public static String DeleteVideo=domain+"DeleteVideo";
+    public static String DeleteVideo=domain+"DeleteVideo";*/
 
 }

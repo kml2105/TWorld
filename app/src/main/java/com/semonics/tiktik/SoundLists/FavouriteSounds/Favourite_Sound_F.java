@@ -167,13 +167,13 @@ public class Favourite_Sound_F extends RootFragment implements Player.EventListe
             e.printStackTrace();
         }
 
-        ApiRequest.Call_Api(context, Variables.my_FavSound, parameters, new Callback() {
+/*        ApiRequest.Call_Api(context, Variables.my_FavSound, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 swiperefresh.setRefreshing(false);
                 Parse_data(resp);
             }
-        });
+        });*/
 
 
     }
@@ -415,12 +415,12 @@ public class Favourite_Sound_F extends RootFragment implements Player.EventListe
             e.printStackTrace();
         }
 
-        ApiRequest.Call_Api(context, Variables.fav_sound, parameters, new Callback() {
+       /* ApiRequest.Call_Api(context, Variables.fav_sound, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 iosDialog.cancel();
             }
-        });
+        });*/
 
 
     }

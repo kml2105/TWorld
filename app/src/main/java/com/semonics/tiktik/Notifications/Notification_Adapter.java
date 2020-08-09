@@ -63,17 +63,13 @@ public class Notification_Adapter extends RecyclerView.Adapter<Notification_Adap
                     listener.onItemClick(v,pos,item);
                 }
             });
-
-
         }
-
 
     }
 
     @Override
     public void onBindViewHolder(final Notification_Adapter.CustomViewHolder holder, final int i) {
         holder.setIsRecyclable(false);
-
         holder.bind(i,datalist.get(i),listener);
 
 }

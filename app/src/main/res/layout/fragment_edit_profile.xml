@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/profile_image"
-                android:src="@drawable/profile_image_placeholder"/>
+                android:src="@drawable/user_profile"/>
 
                 <ImageButton
                     android:layout_width="40dp"

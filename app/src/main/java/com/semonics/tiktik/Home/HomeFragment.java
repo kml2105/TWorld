@@ -12,24 +12,6 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.Nullable;
-
-import com.daasuu.gpuv.composer.FillMode;
-import com.semonics.tiktik.SimpleClasses.ApiRequest;
-import com.semonics.tiktik.SimpleClasses.Callback;
-import com.semonics.tiktik.SimpleClasses.WSParams;
-import com.semonics.tiktik.SoundLists.VideoSound_A;
-import com.google.android.material.tabs.TabLayout;
-
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -45,21 +27,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.daasuu.gpuv.composer.FillMode;
 import com.daasuu.gpuv.composer.GPUMp4Composer;
 import com.daasuu.gpuv.egl.filter.GlWatermarkFilter;
-import com.semonics.tiktik.Comments.Comment_F;
-import com.semonics.tiktik.Main_Menu.MainMenuActivity;
-import com.semonics.tiktik.Main_Menu.MainMenuFragment;
-import com.semonics.tiktik.Main_Menu.RelateToFragment_OnBack.RootFragment;
-import com.semonics.tiktik.Profile.Profile_F;
-import com.semonics.tiktik.R;
-import com.semonics.tiktik.SimpleClasses.API_CallBack;
-import com.semonics.tiktik.SimpleClasses.Fragment_Callback;
-import com.semonics.tiktik.SimpleClasses.Fragment_Data_Send;
-import com.semonics.tiktik.SimpleClasses.Functions;
-import com.semonics.tiktik.SimpleClasses.Variables;
-import com.semonics.tiktik.Taged.Taged_Videos_F;
-import com.semonics.tiktik.VideoAction.VideoAction_F;
 import com.downloader.Error;
 import com.downloader.OnCancelListener;
 import com.downloader.OnDownloadListener;
@@ -84,10 +65,28 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-/*import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;*/
+import com.google.android.material.tabs.TabLayout;
+import com.semonics.tiktik.Comments.Comment_F;
+import com.semonics.tiktik.Main_Menu.MainMenuFragment;
+import com.semonics.tiktik.Main_Menu.RelateToFragment_OnBack.RootFragment;
+import com.semonics.tiktik.Model.Music;
+import com.semonics.tiktik.Model.UserDetails;
+import com.semonics.tiktik.Profile.Profile_F;
+import com.semonics.tiktik.R;
+import com.semonics.tiktik.SimpleClasses.Fragment_Callback;
+import com.semonics.tiktik.SimpleClasses.Fragment_Data_Send;
+import com.semonics.tiktik.SimpleClasses.Functions;
+import com.semonics.tiktik.SimpleClasses.Utils;
+import com.semonics.tiktik.SimpleClasses.Variables;
+import com.semonics.tiktik.SoundLists.VideoSound_A;
+import com.semonics.tiktik.Taged.Taged_Videos_F;
+import com.semonics.tiktik.VideoAction.VideoAction_F;
+import com.semonics.tiktik.WebService.BaseAPIService;
+import com.semonics.tiktik.WebService.RequestParams;
+import com.semonics.tiktik.WebService.ResponseListener;
+import com.semonics.tiktik.WebService.SessionManager;
+import com.semonics.tiktik.WebService.TicTic;
+import com.semonics.tiktik.WebService.WSParams;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
 
 import org.json.JSONArray;
@@ -96,54 +95,67 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
+import static com.semonics.tiktik.WebService.WSParams.METHOD_GET;
+import static com.semonics.tiktik.WebService.WSParams.METHOD_POST;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_GET_DOC_FOR_YOU;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_LIKE_VIDEO;
+import static com.semonics.tiktik.WebService.WSParams.WS_KEY_OBJ;
+
+/*import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;*/
 
 /**
  * A simple {@link Fragment} subclass.
  */
 
 // this is the main view which is show all  the video in list
-public class Home_F extends RootFragment implements Player.EventListener, Fragment_Data_Send {
+public class HomeFragment extends RootFragment implements Player.EventListener, Fragment_Data_Send {
 
     View view;
     Context context;
 
 
     RecyclerView recyclerView;
-    ArrayList<Home_Get_Set> data_list;
-    int currentPage=-1;
+    ArrayList<HomeModel> data_list;
+    int currentPage = -1;
     LinearLayoutManager layoutManager;
 
     ProgressBar p_bar;
 
     SwipeRefreshLayout swiperefresh;
     boolean isMute = false;
-    ImageView ivMute ;
+    ImageView ivMute;
     TextView tvMute;
+    SessionManager sessionManager;
 
-    public Home_F() {
+    public HomeFragment() {
         // Required empty public constructor
     }
 
-    int swipe_count=0;
+    int swipe_count = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.fragment_home, container, false);
-        context=getContext();
+        view = inflater.inflate(R.layout.fragment_home, container, false);
+        context = getContext();
 
-        p_bar=view.findViewById(R.id.p_bar);
+        p_bar = view.findViewById(R.id.p_bar);
 
-        recyclerView=view.findViewById(R.id.recylerview);
-        layoutManager=new LinearLayoutManager(context);
+        recyclerView = view.findViewById(R.id.recylerview);
+        layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(false);
 
-        SnapHelper snapHelper =  new PagerSnapHelper();
-         snapHelper.attachToRecyclerView(recyclerView);
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
 
 
         ivMute = view.findViewById(R.id.mute_video);
@@ -155,60 +167,60 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 super.onScrollStateChanged(recyclerView, newState);
 
             }
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 //here we find the current item number
                 final int scrollOffset = recyclerView.computeVerticalScrollOffset();
                 final int height = recyclerView.getHeight();
-                int page_no=scrollOffset / height;
+                int page_no = scrollOffset / height;
 
-                if(page_no!=currentPage ){
-                    currentPage=page_no;
+                if (page_no != currentPage) {
+                    currentPage = page_no;
 
                     Release_Privious_Player();
-                    Set_Player(currentPage);
+                    //Set_Player(currentPage);
 
                 }
             }
         });
 
 
-
-        swiperefresh=view.findViewById(R.id.swiperefresh);
+        swiperefresh = view.findViewById(R.id.swiperefresh);
         swiperefresh.setProgressViewOffset(false, 0, 200);
-
+        sessionManager = TicTic.getInstance().getSession();
         swiperefresh.setColorSchemeResources(R.color.black);
         swiperefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                currentPage=-1;
-                //Call_Api_For_get_Allvideos();
+                currentPage = -1;
+                apiCall();
             }
         });
-
-        //Call_Api_For_get_Allvideos();
+    //    apiCall();
 
         return view;
     }
 
 
     Home_Adapter adapter;
-    public void Set_Adapter(){
 
-         adapter=new Home_Adapter(context, data_list, new Home_Adapter.OnItemClickListener() {
+    public void Set_Adapter() {
+
+        adapter = new Home_Adapter(context, data_list, new Home_Adapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int postion, final Home_Get_Set item, View view) {
+            public void onItemClick(int postion, final HomeModel item, View view) {
 
-                switch(view.getId()) {
+                switch (view.getId()) {
                     case R.id.user_pic:
                         onPause();
-                        OpenProfile(item,false);
+                        OpenProfile(item, false);
                         break;
 
                     case R.id.username:
                         onPause();
-                        OpenProfile(item,false);
+                        OpenProfile(item, false);
                         break;
 
                     case R.id.like_layout:
@@ -224,26 +236,26 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                         break;
 
                     case R.id.shared_layout:
-                            final VideoAction_F fragment = new VideoAction_F(item.video_id, new Fragment_Callback() {
-                                @Override
-                                public void Responce(Bundle bundle) {
+                        final VideoAction_F fragment = new VideoAction_F(item.id, new Fragment_Callback() {
+                            @Override
+                            public void Responce(Bundle bundle) {
 
-                                    if(bundle.getString("action").equals("save")){
-                                        Save_Video(item);
-                                    }
+                                if (bundle.getString("action").equals("save")) {
+                                    Save_Video(item);
                                 }
-                            });
-                            fragment.show(getChildFragmentManager(), "");
+                            }
+                        });
+                        fragment.show(getChildFragmentManager(), "");
 
                         break;
 
 
                     case R.id.sound_image_layout:
-                            if(check_permissions()) {
-                                Intent intent = new Intent(getActivity(), VideoSound_A.class);
-                                intent.putExtra("data", item);
-                                startActivity(intent);
-                            }
+                        if (check_permissions()) {
+                            Intent intent = new Intent(getActivity(),VideoSound_A.class);
+                            intent.putExtra("data", item);
+                            startActivity(intent);
+                        }
 
                         break;
                 }
@@ -256,33 +268,85 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     }
 
-
-
-    // Bottom two function will call the api and get all the videos form api and parse the json data
-    private void Call_Api_For_get_Allvideos() {
-
-        ApiRequest.Call_Api(context, Variables.videoForFollowingAPI, null, new Callback() {
-            @Override
-            public void Responce(String resp) {
-                swiperefresh.setRefreshing(false);
-                Parse_data(resp);
-            }
-        });
-
-
-
+    public void apiCall() {
+        try {
+            new BaseAPIService(getContext(), SERVICE_GET_DOC_FOR_YOU, null, true, responseListener, METHOD_GET, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void Parse_data(String responce){
+    ResponseListener responseListener = new ResponseListener() {
+        @Override
+        public void onSuccess(String res) {
+            try {
+                data_list = new ArrayList<>();
+                JSONObject jsonObject = new JSONObject(res);
+                int code = jsonObject.optInt(WSParams.WS_KEY_CODE);
+                JSONArray array = jsonObject.getJSONArray(WS_KEY_OBJ);
+                if (code == 200) {
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject itemdata = array.optJSONObject(i);
+                        HomeModel item = new HomeModel();
+                        item.id = itemdata.optString("_id");
+                        JSONObject user_info = itemdata.optJSONObject("userDetails");
+                        UserDetails userDetails = new UserDetails();
+                        userDetails.firstName = user_info.optString("firstName");
+                        userDetails.lastName = user_info.optString("lastName");
+                        userDetails.profilePic = user_info.optString("profilePic");
+                        item.userDetails = userDetails;
 
-        data_list=new ArrayList<>();
+
+                        JSONObject sound_data = itemdata.optJSONObject("music");
+                        if(sound_data!=null){
+                            Music musicModel = new Music();
+                            musicModel.id = sound_data.optString("_id");
+                            musicModel.musicName = sound_data.optString("musicName");
+                            musicModel.thumb = sound_data.optString("thumb");
+                            item.music = musicModel;
+                        }
+
+                        item.likeCount = itemdata.optInt("likeCount");
+                        item.commentCount = itemdata.optInt("commentCount");
+                        JSONArray hashTagArray = itemdata.getJSONArray("hashTag");
+                        String[] hashtags = new String[hashTagArray.length()];
+                        for (int a = 0; a < hashTagArray.length(); a++) {
+                            hashtags[a]= hashTagArray.getString(a);
+                        }
+                        List<String> hashtagList = Arrays.asList(hashtags);
+                        item.hashTag = hashtagList;
+                        item.location = itemdata.optString("location");
+                        item.docName =/*Variables.base_url+*/itemdata.optString("docName");
+                        item.caption = itemdata.optString("caption");
+                        item.createdDate = itemdata.optInt("createdDate");
+                        data_list.add(item);
+                    }
+                    Set_Adapter();
+                }
+               /* } else {
+                    methodToast(context, msg);
+                }*/
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(String error) {
+            Utils.methodToast(context, error);
+        }
+    };
+
+    public void Parse_data(String responce) {
+
+        data_list = new ArrayList<>();
 
         try {
-            JSONObject jsonObject=new JSONObject(responce);
-            int code=jsonObject.optInt(WSParams.WS_KEY_CODE);
-            if(code==200){
-                JSONArray msgArray=jsonObject.getJSONArray(WSParams.WS_KEY_OBJ);
-                for (int i=0;i<msgArray.length();i++) {
+            JSONObject jsonObject = new JSONObject(responce);
+            int code = jsonObject.optInt(WSParams.WS_KEY_CODE);
+            if (code == 200) {
+                JSONArray msgArray = jsonObject.getJSONArray(WSParams.WS_KEY_OBJ);
+                for (int i = 0; i < msgArray.length(); i++) {
                     JSONObject itemdata = msgArray.optJSONObject(i);
                    /* Home_Get_Set item=new Home_Get_Set();
                     item.fb_id=itemdata.optString("_id");
@@ -319,8 +383,8 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
                 Set_Adapter();
 
-            }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
             }
 
         } catch (JSONException e) {
@@ -330,20 +394,20 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     }
 
 
-
     private void Call_Api_For_Singlevideos(final int postion) {
 
 
         JSONObject parameters = new JSONObject();
         try {
-            parameters.put("fb_id", Variables.sharedPreferences.getString(Variables.u_id,"0"));
-            parameters.put("token",Variables.sharedPreferences.getString(Variables.device_token,"Null"));
-            parameters.put("video_id",data_list.get(postion).video_id);
+            parameters.put("fb_id", Variables.sharedPreferences.getString(Variables.u_id, "0"));
+            parameters.put("token", Variables.sharedPreferences.getString(Variables.device_token, "Null"));
+            parameters.put("video_id", data_list.get(postion).id);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+/*
 
         ApiRequest.Call_Api(context, Variables.showAllVideos, parameters, new Callback() {
             @Override
@@ -352,11 +416,12 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 Singal_Video_Parse_data(postion,resp);
             }
         });
+*/
 
 
     }
 
-    public void Singal_Video_Parse_data(int pos,String responce){
+/*    public void Singal_Video_Parse_data(int pos,String responce){
 
         try {
             JSONObject jsonObject=new JSONObject(responce);
@@ -410,43 +475,39 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             e.printStackTrace();
         }
 
-    }
-
-
+    }*/
 
 
     // this will call when swipe for another video and
     // this function will set the player to the current video
-    public void Set_Player(final int currentPage){
+    public void Set_Player(final int currentPage) {
 
-            final Home_Get_Set item= data_list.get(currentPage);
-            DefaultTrackSelector trackSelector = new DefaultTrackSelector();
-             final SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
+        final HomeModel item = data_list.get(currentPage);
+        DefaultTrackSelector trackSelector = new DefaultTrackSelector();
+        final SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
 
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
-                    Util.getUserAgent(context, "TikTok"));
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
+                Util.getUserAgent(context, "TikTok"));
 
-            MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(Uri.parse(item.video_url));
+        MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(Uri.parse(item.docName));
 
-            Log.d("resp",item.video_url);
-
-
-             player.prepare(videoSource);
-
-             player.setRepeatMode(Player.REPEAT_MODE_ALL);
-             player.addListener(this);
+        Log.d("resp", item.docName);
 
 
-         View layout=layoutManager.findViewByPosition(currentPage);
-         final PlayerView playerView=layout.findViewById(R.id.playerview);
-          playerView.setPlayer(player);
+        player.prepare(videoSource);
+
+        player.setRepeatMode(Player.REPEAT_MODE_ALL);
+        player.addListener(this);
+
+
+        View layout = layoutManager.findViewByPosition(currentPage);
+        final PlayerView playerView = layout.findViewById(R.id.playerview);
+        playerView.setPlayer(player);
 
 
         player.setPlayWhenReady(is_visible_to_user);
-        privious_player=player;
-
-
+        privious_player = player;
 
 
         final RelativeLayout mainlayout = layout.findViewById(R.id.mainlayout);
@@ -455,14 +516,13 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
                 @Override
                 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                     super.onFling(e1, e2, velocityX, velocityY);
+                    super.onFling(e1, e2, velocityX, velocityY);
                     float deltaX = e1.getX() - e2.getX();
                     float deltaXAbs = Math.abs(deltaX);
                     // Only when swipe distance between minimal and maximal distance value then we treat it as effective swipe
-                    if((deltaXAbs > 100) && (deltaXAbs < 1000)) {
-                        if(deltaX > 0)
-                        {
-                            OpenProfile(item,true);
+                    if ((deltaXAbs > 100) && (deltaXAbs < 1000)) {
+                        if (deltaX > 0) {
+                            OpenProfile(item, true);
                         }
                     }
 
@@ -473,9 +533,9 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
                     super.onSingleTapUp(e);
-                    if(!player.getPlayWhenReady()){
+                    if (!player.getPlayWhenReady()) {
                         privious_player.setPlayWhenReady(true);
-                    }else{
+                    } else {
                         privious_player.setPlayWhenReady(false);
                     }
 
@@ -493,14 +553,14 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
 
-                    if(!player.getPlayWhenReady()){
+                    if (!player.getPlayWhenReady()) {
                         privious_player.setPlayWhenReady(true);
                     }
 
 
                     //if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)) {
-                        Show_heart_on_DoubleTap(item, mainlayout, e);
-                        Like_Video(currentPage, item);
+                    Show_heart_on_DoubleTap(item, mainlayout, e);
+                    Like_Video(currentPage, item);
                    /* }else {
                         Toast.makeText(context, "Please Login into app", Toast.LENGTH_SHORT).show();
                     }*/
@@ -516,7 +576,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             }
         });
 
-        TextView desc_txt=layout.findViewById(R.id.desc_txt);
+        TextView desc_txt = layout.findViewById(R.id.desc_txt);
         HashTagHelper.Creator.create(context.getResources().getColor(R.color.maincolor), new HashTagHelper.OnHashTagClickListener() {
             @Override
             public void onHashTagClicked(String hashTag) {
@@ -528,47 +588,45 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
         }).handle(desc_txt);
 
 
-
-        LinearLayout soundimage = (LinearLayout)layout.findViewById(R.id.sound_image_layout);
-        Animation sound_animation = AnimationUtils.loadAnimation(context,R.anim.d_clockwise_rotation);
+        LinearLayout soundimage = (LinearLayout) layout.findViewById(R.id.sound_image_layout);
+        Animation sound_animation = AnimationUtils.loadAnimation(context, R.anim.d_clockwise_rotation);
         soundimage.startAnimation(sound_animation);
 
-        if(Variables.sharedPreferences.getBoolean(Variables.islogin,false))
-        Functions.Call_Api_For_update_view(getActivity(),item.video_id);
+        if (Variables.sharedPreferences.getBoolean(Variables.islogin, false))
+            Functions.Call_Api_For_update_view(getActivity(), item.id);
 
 
         swipe_count++;
-        if(swipe_count>4){
+        if (swipe_count > 4) {
             //Show_add();
-            swipe_count=0;
+            swipe_count = 0;
         }
 
 
-
-        Call_Api_For_Singlevideos(currentPage);
+        //Call_Api_For_Singlevideos(currentPage);
 
     }
 
 
-    public void Show_heart_on_DoubleTap(Home_Get_Set item,final RelativeLayout mainlayout,MotionEvent e){
+    public void Show_heart_on_DoubleTap(HomeModel item, final RelativeLayout mainlayout, MotionEvent e) {
 
-        int x = (int) e.getX()-100;
-        int y = (int) e.getY()-100;
+        int x = (int) e.getX() - 100;
+        int y = (int) e.getY() - 100;
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         final ImageView iv = new ImageView(getApplicationContext());
         lp.setMargins(x, y, 0, 0);
         iv.setLayoutParams(lp);
-        if(item.liked.equals("1"))
-        iv.setImageDrawable(getResources().getDrawable(
-                R.drawable.ic_like));
+        if (item.like == 1)
+            iv.setImageDrawable(getResources().getDrawable(
+                    R.drawable.ic_like));
         else
             iv.setImageDrawable(getResources().getDrawable(
                     R.drawable.ic_like_fill));
 
         mainlayout.addView(iv);
-        Animation fadeoutani = AnimationUtils.loadAnimation(context,R.anim.fade_out);
+        Animation fadeoutani = AnimationUtils.loadAnimation(context, R.anim.fade_out);
 
         fadeoutani.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -601,134 +659,141 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     @Override
     public void onDataSent(String yourData) {
-        int comment_count =Integer.parseInt(yourData);
-        Home_Get_Set item=data_list.get(currentPage);
-        item.video_comment_count=""+comment_count;
+        int comment_count = Integer.parseInt(yourData);
+        HomeModel item = data_list.get(currentPage);
+        item.commentCount = comment_count;
         data_list.remove(currentPage);
-        data_list.add(currentPage,item);
+        data_list.add(currentPage, item);
         adapter.notifyDataSetChanged();
     }
-
 
 
     // this will call when go to the home tab From other tab.
     // this is very importent when for video play and pause when the focus is changes
     boolean is_visible_to_user;
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        is_visible_to_user=isVisibleToUser;
+        is_visible_to_user = isVisibleToUser;
 
-        if(privious_player!=null && isVisibleToUser){
+        if (privious_player != null && isVisibleToUser) {
             privious_player.setPlayWhenReady(true);
-        }else if(privious_player!=null && !isVisibleToUser){
+        } else if (privious_player != null && !isVisibleToUser) {
             privious_player.setPlayWhenReady(false);
         }
     }
 
 
-
-   // when we swipe for another video this will relaese the privious player
+    // when we swipe for another video this will relaese the privious player
     SimpleExoPlayer privious_player;
-    public void Release_Privious_Player(){
-        if(privious_player!=null) {
+
+    public void Release_Privious_Player() {
+        if (privious_player != null) {
             privious_player.removeListener(this);
             privious_player.release();
         }
     }
 
 
-
-
     // this function will call for like the video and Call an Api for like the video
-    public void Like_Video(final int position, final Home_Get_Set home_get_set){
-        String action=home_get_set.liked;
+    public void Like_Video(final int position, final HomeModel home_model) {
+        String action = home_model.likeCount.toString();
 
-        if(action.equals("1")){
-            action="0";
-            home_get_set.like_count=""+(Integer.parseInt(home_get_set.like_count) -1);
-        }else {
-            action="1";
-            home_get_set.like_count=""+(Integer.parseInt(home_get_set.like_count) +1);
+        if (action.equals("1")) {
+            action = "0";
+            home_model.likeCount = home_model.likeCount - 1;
+        } else {
+            action = "1";
+            home_model.likeCount = home_model.likeCount + 1;
         }
 
 
         data_list.remove(position);
-        home_get_set.liked=action;
-        data_list.add(position,home_get_set);
+        home_model.like = Integer.valueOf(action);
+        data_list.add(position, home_model);
         adapter.notifyDataSetChanged();
 
-        Functions.Call_Api_For_like_video(getActivity(), home_get_set.video_id, action,new API_CallBack() {
-
-            @Override
-            public void ArrayData(ArrayList arrayList) {
-
-            }
-
-            @Override
-            public void OnSuccess(String responce) {
-
-            }
-
-            @Override
-            public void OnFail(String responce) {
-
-            }
-        });
-
+        apiCallForLikeVideo(data_list.get(position).id);
     }
 
-private void muteVideo(){
+    private void apiCallForLikeVideo(String docId){
+        try {
+            new BaseAPIService(getContext(), SERVICE_LIKE_VIDEO+docId, RequestParams.likeVideo(), true, responseListenerForLikeVideo, METHOD_POST, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    ResponseListener responseListenerForLikeVideo = new ResponseListener() {
+        @Override
+        public void onSuccess(String res) {
+            try {
+                JSONObject jsonObject = new JSONObject(res);
+                JSONObject object = jsonObject.getJSONObject(WS_KEY_OBJ);
+                sessionManager.putString(SessionManager.PREF_LIKE_COUNT,object.getString("likeCount"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(String error) {
+            Utils.methodToast(context, error);
+        }
+    };
+    private void muteVideo() {
         isMute = !isMute;
-        if(isMute){
-           ivMute.setImageDrawable(getResources().getDrawable(R.drawable.ic_share));
-        }else{
+        if (isMute) {
+            ivMute.setImageDrawable(getResources().getDrawable(R.drawable.ic_share));
+        } else {
             ivMute.setImageDrawable(getResources().getDrawable(R.drawable.ic_like));
         }
-}
+    }
 
     // this will open the comment screen
-    private void OpenComment(Home_Get_Set item) {
+    private void OpenComment(HomeModel item) {
 
-        int comment_counnt=Integer.parseInt(item.video_comment_count);
+        int comment_counnt = item.commentCount;
 
-        Fragment_Data_Send fragment_data_send=this;
+        Fragment_Data_Send fragment_data_send = this;
 
-        Comment_F comment_f = new Comment_F(comment_counnt,fragment_data_send);
+        Comment_F comment_f = new Comment_F(comment_counnt, fragment_data_send);
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
         Bundle args = new Bundle();
-        args.putString("video_id",item.video_id);
-        args.putString("user_id",item.fb_id);
+        args.putString("video_id", item.id);
+        // args.putString("user_id",item.fb_id);
         comment_f.setArguments(args);
         transaction.addToBackStack(null);
         transaction.replace(R.id.MainMenuFragment, comment_f).commit();
     }
 
     // this will open the profile of user which have uploaded the currenlty running video
-    private void OpenProfile(Home_Get_Set item,boolean from_right_to_left) {
-        if(Variables.sharedPreferences.getString(Variables.u_id,"0").equals(item.fb_id)){
+    private void OpenProfile(HomeModel item, boolean from_right_to_left) {
+        if (Variables.sharedPreferences.getString(Variables.u_id, "0").equals(item.id)) {//userid
 
-            TabLayout.Tab profile= MainMenuFragment.tabLayout.getTabAt(4);
+            TabLayout.Tab profile = MainMenuFragment.tabLayout.getTabAt(4);
             profile.select();
 
-        }else {
+        } else {
             Profile_F profile_f = new Profile_F(new Fragment_Callback() {
                 @Override
                 public void Responce(Bundle bundle) {
                     Call_Api_For_Singlevideos(currentPage);
+                    apiCall();
                 }
             });
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            if(from_right_to_left)
-            transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
+            if (from_right_to_left)
+                transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
             else
                 transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
 
             Bundle args = new Bundle();
-            args.putString("user_id", item.fb_id);
-            args.putString("user_name",item.first_name+" "+item.last_name);
-            args.putString("user_pic",item.profile_pic);
+            //   args.putString("user_id", item.fb_id);
+            //  args.putString("user_name",item.first_name+" "+item.last_name);
+            // args.putString("user_pic",item.profile_pic);
             profile_f.setArguments(args);
             transaction.addToBackStack(null);
             transaction.replace(R.id.MainMenuFragment, profile_f).commit();
@@ -740,25 +805,24 @@ private void muteVideo(){
     // this will open the profile of user which have uploaded the currenlty running video
     private void OpenHashtag(String tag) {
 
-            Taged_Videos_F taged_videos_f = new Taged_Videos_F();
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
-            Bundle args = new Bundle();
-            args.putString("tag", tag);
-            taged_videos_f.setArguments(args);
-            transaction.addToBackStack(null);
-            transaction.replace(R.id.MainMenuFragment, taged_videos_f).commit();
+        Taged_Videos_F taged_videos_f = new Taged_Videos_F();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
+        Bundle args = new Bundle();
+        args.putString("tag", tag);
+        taged_videos_f.setArguments(args);
+        transaction.addToBackStack(null);
+        transaction.replace(R.id.MainMenuFragment, taged_videos_f).commit();
 
 
     }
 
 
+    private void Show_video_option(final HomeModel home_model) {
 
-    private void Show_video_option(final Home_Get_Set home_get_set) {
+        final CharSequence[] options = {"Save Video", "Cancel"};
 
-        final CharSequence[] options = { "Save Video","Cancel" };
-
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context,R.style.AlertDialogCustom);
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.AlertDialogCustom);
 
         builder.setTitle(null);
 
@@ -768,16 +832,11 @@ private void muteVideo(){
 
             public void onClick(DialogInterface dialog, int item) {
 
-                if (options[item].equals("Save Video"))
+                if (options[item].equals("Save Video")) {
+                    if (Functions.Checkstoragepermision(getActivity()))
+                        Save_Video(home_model);
 
-                {
-                    if(Functions.Checkstoragepermision(getActivity()))
-                    Save_Video(home_get_set);
-
-                }
-
-
-                else if (options[item].equals("Cancel")) {
+                } else if (options[item].equals("Cancel")) {
 
                     dialog.dismiss();
 
@@ -791,11 +850,11 @@ private void muteVideo(){
 
     }
 
-    public void Save_Video(final Home_Get_Set item){
+    public void Save_Video(final HomeModel item) {
 
-        Functions.Show_determinent_loader(context,false,false);
+        Functions.Show_determinent_loader(context, false, false);
         PRDownloader.initialize(getActivity().getApplicationContext());
-        DownloadRequest prDownloader= PRDownloader.download(item.video_url, Environment.getExternalStorageDirectory() +"/Tittic/", item.video_id+"no_watermark"+".mp4")
+        DownloadRequest prDownloader = PRDownloader.download(item.docName, Environment.getExternalStorageDirectory() + "/Tittic/", item.id + "no_watermark" + ".mp4")
                 .build()
                 .setOnStartOrResumeListener(new OnStartOrResumeListener() {
                     @Override
@@ -819,52 +878,50 @@ private void muteVideo(){
                     @Override
                     public void onProgress(Progress progress) {
 
-                        int prog=(int)((progress.currentBytes*100)/progress.totalBytes);
-                        Functions.Show_loading_progress(prog/2);
+                        int prog = (int) ((progress.currentBytes * 100) / progress.totalBytes);
+                        Functions.Show_loading_progress(prog / 2);
 
                     }
                 });
 
 
-              prDownloader.start(new OnDownloadListener() {
-                @Override
-                public void onDownloadComplete() {
-                    Applywatermark(item);
-                   }
+        prDownloader.start(new OnDownloadListener() {
+            @Override
+            public void onDownloadComplete() {
+                Applywatermark(item);
+            }
 
-                @Override
-                public void onError(Error error) {
-                    Delete_file_no_watermark(item);
-                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
-                    Functions.cancel_determinent_loader();
-                }
-
-
-            });
+            @Override
+            public void onError(Error error) {
+                Delete_file_no_watermark(item);
+                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                Functions.cancel_determinent_loader();
+            }
 
 
+        });
 
 
     }
 
-    public void Applywatermark(final Home_Get_Set item){
+    public void Applywatermark(final HomeModel item) {
 
-         Bitmap myLogo = ((BitmapDrawable)getResources().getDrawable(R.drawable.ic_watermark_image)).getBitmap();
-         Bitmap bitmap_resize=Bitmap.createScaledBitmap(myLogo, 50, 50, false);
-         GlWatermarkFilter filter=new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.LEFT_TOP);
-         new GPUMp4Composer(Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+"no_watermark"+".mp4",
-                Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+".mp4")
-                 .fillMode(FillMode.PRESERVE_ASPECT_FIT)
-                 .filter(filter)
-                 .mute(isMute)
-                 .flipHorizontal(false)
-                 .flipVertical(false)
+        Bitmap myLogo = ((BitmapDrawable) getResources().getDrawable(R.drawable.ic_watermark_image)).getBitmap();
+        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 50, 50, false);
+        GlWatermarkFilter filter = new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.LEFT_TOP);
+        new GPUMp4Composer(Environment.getExternalStorageDirectory() + "/Tittic/" + item.id + "no_watermark" + ".mp4",
+                Environment.getExternalStorageDirectory() + "/Tittic/" + item.id + ".mp4")
+                .fillMode(FillMode.PRESERVE_ASPECT_FIT)
+                .filter(filter)
+                .mute(isMute)
+                .flipHorizontal(false)
+                .flipVertical(false)
                 .listener(new GPUMp4Composer.Listener() {
                     @Override
                     public void onProgress(double progress) {
 
-                        Log.d("resp",""+(int) (progress*100));
-                        Functions.Show_loading_progress((int)((progress*100)/2)+50);
+                        Log.d("resp", "" + (int) (progress * 100));
+                        Functions.Show_loading_progress((int) ((progress * 100) / 2) + 50);
 
                     }
 
@@ -893,7 +950,7 @@ private void muteVideo(){
                     @Override
                     public void onFailed(Exception exception) {
 
-                        Log.d("resp",exception.toString());
+                        Log.d("resp", exception.toString());
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -904,7 +961,7 @@ private void muteVideo(){
                                     Functions.cancel_determinent_loader();
                                     Toast.makeText(context, "Try Again", Toast.LENGTH_SHORT).show();
 
-                                }catch (Exception e){
+                                } catch (Exception e) {
 
                                 }
                             }
@@ -916,16 +973,16 @@ private void muteVideo(){
     }
 
 
-    public void Delete_file_no_watermark(Home_Get_Set item){
-        File file=new File(Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+"no_watermark"+".mp4");
-        if(file.exists()){
+    public void Delete_file_no_watermark(HomeModel item) {
+        File file = new File(Environment.getExternalStorageDirectory() + "/Tittic/" + item.id + "no_watermark" + ".mp4");
+        if (file.exists()) {
             file.delete();
         }
     }
 
-    public void Scan_file(Home_Get_Set item){
+    public void Scan_file(HomeModel item) {
         MediaScannerConnection.scanFile(getActivity(),
-                new String[] { Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+".mp4" },
+                new String[]{Environment.getExternalStorageDirectory() + "/Tittic/" + item.id + ".mp4"},
                 null,
                 new MediaScannerConnection.OnScanCompletedListener() {
 
@@ -938,12 +995,11 @@ private void muteVideo(){
     }
 
 
-
-    public boolean is_fragment_exits(){
+    public boolean is_fragment_exits() {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        if(fm.getBackStackEntryCount()==0){
+        if (fm.getBackStackEntryCount() == 0) {
             return false;
-        }else {
+        } else {
             return true;
         }
 
@@ -953,7 +1009,7 @@ private void muteVideo(){
     @Override
     public void onResume() {
         super.onResume();
-        if((privious_player!=null && is_visible_to_user) && !is_fragment_exits() ){
+        if ((privious_player != null && is_visible_to_user) && !is_fragment_exits()) {
             privious_player.setPlayWhenReady(true);
         }
     }
@@ -962,7 +1018,7 @@ private void muteVideo(){
     @Override
     public void onPause() {
         super.onPause();
-        if(privious_player!=null){
+        if (privious_player != null) {
             privious_player.setPlayWhenReady(false);
         }
     }
@@ -971,7 +1027,7 @@ private void muteVideo(){
     @Override
     public void onStop() {
         super.onStop();
-        if(privious_player!=null){
+        if (privious_player != null) {
             privious_player.setPlayWhenReady(false);
         }
     }
@@ -980,11 +1036,10 @@ private void muteVideo(){
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(privious_player!=null){
+        if (privious_player != null) {
             privious_player.release();
         }
     }
-
 
 
     public boolean check_permissions() {
@@ -998,7 +1053,7 @@ private void muteVideo(){
 
         if (!hasPermissions(context, PERMISSIONS)) {
             requestPermissions(PERMISSIONS, 2);
-        }else {
+        } else {
 
             return true;
         }
@@ -1017,9 +1072,6 @@ private void muteVideo(){
         }
         return true;
     }
-
-
-
 
 
     // Bottom all the function and the Call back listener of the Expo player
@@ -1044,11 +1096,10 @@ private void muteVideo(){
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-        if(playbackState==Player.STATE_BUFFERING){
+        if (playbackState == Player.STATE_BUFFERING) {
             p_bar.setVisibility(View.VISIBLE);
-        }
-        else if(playbackState==Player.STATE_READY){
-             p_bar.setVisibility(View.GONE);
+        } else if (playbackState == Player.STATE_READY) {
+            p_bar.setVisibility(View.GONE);
         }
 
 
@@ -1084,7 +1135,6 @@ private void muteVideo(){
     public void onSeekProcessed() {
 
     }
-
 
 
 }

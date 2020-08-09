@@ -112,7 +112,7 @@ public class Edit_Profile_F extends RootFragment implements View.OnClickListener
 
         Picasso.with(context)
                 .load(Variables.sharedPreferences.getString(Variables.u_pic,""))
-                .placeholder(R.drawable.profile_image_placeholder)
+                .placeholder(R.drawable.user_profile)
                 .resize(200,200)
                 .centerCrop()
                 .into(profile_image);
@@ -444,7 +444,7 @@ public class Edit_Profile_F extends RootFragment implements View.OnClickListener
             e.printStackTrace();
         }
 
-        ApiRequest.Call_Api(context, Variables.uploadImage, parameters, new Callback() {
+  /*      ApiRequest.Call_Api(context, Variables.uploadImage, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 Functions.cancel_loader();
@@ -472,7 +472,7 @@ public class Edit_Profile_F extends RootFragment implements View.OnClickListener
                 }
 
             }
-        });
+        });*/
 
 
 
@@ -505,7 +505,7 @@ public class Edit_Profile_F extends RootFragment implements View.OnClickListener
             e.printStackTrace();
         }
 
-        ApiRequest.Call_Api(context, Variables.edit_profile, parameters, new Callback() {
+       /* ApiRequest.Call_Api(context, Variables.edit_profile, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 Functions.cancel_loader();
@@ -529,7 +529,7 @@ public class Edit_Profile_F extends RootFragment implements View.OnClickListener
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
 
     }
 
@@ -578,7 +578,7 @@ public class Edit_Profile_F extends RootFragment implements View.OnClickListener
 
                 Picasso.with(context)
                         .load(picture)
-                        .placeholder(R.drawable.profile_image_placeholder)
+                        .placeholder(R.drawable.user_profile)
                         .into(profile_image);
 
                 String gender = data.optString("gender");

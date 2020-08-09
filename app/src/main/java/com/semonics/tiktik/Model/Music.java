@@ -3,24 +3,26 @@ package com.semonics.tiktik.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Music {
+import java.io.Serializable;
+
+public class Music implements Serializable {
     @SerializedName("_id")
     @Expose
-    private String id;
+    public String id;
     @SerializedName("docType")
     @Expose
-    private String docType;
+    public String docType;
     @SerializedName("musicName")
     @Expose
-    private String musicName;
+    public String musicName;
     @SerializedName("musicSize")
     @Expose
-    private Integer musicSize;
+    public Integer musicSize;
     @SerializedName("path")
     @Expose
-    private String path;
+    public String path;
     @SerializedName("thumb")
     @Expose
-    private String thumb;
+    public String thumb;
 }
 

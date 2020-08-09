@@ -1,11 +1,10 @@
-package com.semonics.tiktik.SimpleClasses;
+package com.semonics.tiktik.WebService;
 
 import android.app.Application;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.FirebaseApp;
 
-import io.fabric.sdk.android.Fabric;
+
 
 /**
  * Created by AQEEL on 3/18/2019.
@@ -20,7 +19,7 @@ public class TicTic extends Application {
     public void onCreate() {
         super.onCreate();
         FirebaseApp.initializeApp(this);
-        Fabric.with(this, new Crashlytics());
+      //  Fabric.with(this, new Crashlytics());
         instance = this;
     }
     public static TicTic getInstance() {

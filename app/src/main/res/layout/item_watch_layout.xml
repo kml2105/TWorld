@@ -51,7 +51,7 @@
                         android:layout_height="50dp"
                         android:scaleType="centerCrop"
                         android:id="@+id/user_pic"
-                        android:src="@drawable/profile_image_placeholder"/>
+                        android:src="@drawable/user_profile"/>
 
                 </LinearLayout>
 

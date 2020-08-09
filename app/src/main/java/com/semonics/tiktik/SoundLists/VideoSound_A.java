@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.semonics.tiktik.Home.Home_Get_Set;
+import com.semonics.tiktik.Home.HomeModel;
 import com.semonics.tiktik.R;
 import com.semonics.tiktik.SimpleClasses.Functions;
 import com.semonics.tiktik.SimpleClasses.Variables;
@@ -54,7 +54,7 @@ import cafe.adriel.androidaudioconverter.model.AudioFormat;
 
 public class VideoSound_A extends AppCompatActivity implements View.OnClickListener {
 
-    Home_Get_Set item;
+    HomeModel item;
     TextView sound_name,description_txt;
     ImageView sound_image;
 
@@ -68,21 +68,21 @@ public class VideoSound_A extends AppCompatActivity implements View.OnClickListe
 
         Intent intent=getIntent();
         if(intent.hasExtra("data")){
-            item= (Home_Get_Set) intent.getSerializableExtra("data");
+            item= (HomeModel) intent.getSerializableExtra("data");
         }
 
-        video_file=new File(Variables.app_folder+item.video_id+".mp4");
+        video_file=new File(Variables.app_folder+item.id+".mp4");
 
         sound_name=findViewById(R.id.sound_name);
         description_txt=findViewById(R.id.description_txt);
         sound_image=findViewById(R.id.sound_image);
 
-        if((item.sound_name==null || item.sound_name.equals("") || item.sound_name.equals("null"))){
+     /*   if((item.sound_name==null || item.sound_name.equals("") || item.sound_name.equals("null"))){
            sound_name.setText("original sound - "+item.first_name+" "+item.last_name);
         }else {
            sound_name.setText(item.sound_name);
         }
-        description_txt.setText(item.video_description);
+        description_txt.setText(item.video_description);*/
 
 
         findViewById(R.id.back_btn).setOnClickListener(this);
@@ -119,7 +119,7 @@ public class VideoSound_A extends AppCompatActivity implements View.OnClickListe
             case R.id.save_btn:
                 try {
                     copyFile(new File(Variables.app_folder+Variables.SelectedAudio_MP3),
-                            new File(Variables.app_folder+item.video_id+".mp3"));
+                            new File(Variables.app_folder+item.id+".mp3"));
                     Toast.makeText(this, "Audio Saved", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -198,7 +198,7 @@ public class VideoSound_A extends AppCompatActivity implements View.OnClickListe
     public void Save_Video(){
         Functions.Show_determinent_loader(this,false,false);
         PRDownloader.initialize(this);
-        DownloadRequest prDownloader= PRDownloader.download(item.video_url, Variables.app_folder, item.video_id+".mp4")
+        DownloadRequest prDownloader= PRDownloader.download(item.docName, Variables.app_folder, item.id+".mp4")
                 .build()
                 .setOnStartOrResumeListener(new OnStartOrResumeListener() {
                     @Override
@@ -233,7 +233,7 @@ public class VideoSound_A extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onDownloadComplete() {
                 Functions.cancel_determinent_loader();
-                audio_file=new File(Variables.app_folder+item.video_id+".mp4");
+                audio_file=new File(Variables.app_folder+item.id+".mp4");
                 Glide.with(VideoSound_A.this)
                         .load(Uri.fromFile(video_file))
                         .into(sound_image);
@@ -293,7 +293,7 @@ public class VideoSound_A extends AppCompatActivity implements View.OnClickListe
 
     public void Extract_sound(){
 
-        String[] complexCommand = {"-y", "-i", Variables.app_folder+item.video_id+".mp4", "-vn", "-ar", "44100", "-ac", "2", "-b:a", "256k", "-f", "mp3",
+        String[] complexCommand = {"-y", "-i", Variables.app_folder+item.id+".mp4", "-vn", "-ar", "44100", "-ac", "2", "-b:a", "256k", "-f", "mp3",
                 Variables.app_folder+Variables.SelectedAudio_MP3};
         try {
             ffmpeg.execute(complexCommand, new FFmpegExecuteResponseHandler() {
@@ -385,7 +385,7 @@ public class VideoSound_A extends AppCompatActivity implements View.OnClickListe
     public void Open_video_recording(){
         Intent intent = new Intent(VideoSound_A.this, Video_Recoder_A.class);
         intent.putExtra("sound_name",sound_name.getText().toString());
-        intent.putExtra("sound_id",item.sound_id);
+        //intent.putExtra("sound_id",item.sound_id);
         startActivity(intent);
         overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
 

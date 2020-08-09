@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/fragment_privacy"
     android:layout_height="match_parent"
     tools:context=".Settings.PrivacyFragment">
 
@@ -82,7 +83,7 @@
                     android:textSize="15dp"
                     android:textStyle="bold" />
                 <Switch
-                    android:id="@+id/switch1"
+                    android:id="@+id/video_download_switch"
                     android:thumbTint="@color/com_facebook_blue"
                     android:trackTint="@color/com_facebook_blue"
                     android:layout_width="0dp"

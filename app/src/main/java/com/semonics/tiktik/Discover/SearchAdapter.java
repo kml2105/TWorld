@@ -11,13 +11,10 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.semonics.tiktik.Home.Home_Get_Set;
+import com.semonics.tiktik.Home.HomeModel;
 import com.semonics.tiktik.R;
 import com.semonics.tiktik.SimpleClasses.Variables;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -25,19 +22,19 @@ import java.util.ArrayList;
  * Created by AQEEL on 3/20/2018.
  */
 
-public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.CustomViewHolder > implements Filterable {
+public class SearchAdapter extends RecyclerView.Adapter<SearchUserAdapter.CustomViewHolder > implements Filterable {
     public Context context;
 
-    ArrayList<Discover_Get_Set> datalist;
-    ArrayList<Discover_Get_Set> datalist_filter;
+    ArrayList<SearchModel> datalist;
+    ArrayList<SearchModel> datalist_filter;
 
     public interface OnItemClickListener {
-        void onItemClick(ArrayList<Home_Get_Set> video_list, int postion);
+        void onItemClick(ArrayList<HomeModel> video_list, int postion);
     }
 
-    public Discover_Adapter.OnItemClickListener listener;
+    public SearchUserAdapter.OnItemClickListener listener;
 
-    public Discover_Adapter(Context context, ArrayList<Discover_Get_Set> arrayList, Discover_Adapter.OnItemClickListener listener) {
+    public SearchAdapter(Context context, ArrayList<SearchModel> arrayList, SearchUserAdapter.OnItemClickListener listener) {
         this.context = context;
         datalist = arrayList;
         datalist_filter=arrayList;
@@ -46,10 +43,10 @@ public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.Cust
 
 
     @Override
-    public Discover_Adapter.CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewtype) {
+    public SearchUserAdapter.CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewtype) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_discover_layout, viewGroup, false);
         view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
-        Discover_Adapter.CustomViewHolder viewHolder = new Discover_Adapter.CustomViewHolder(view);
+        SearchUserAdapter.CustomViewHolder viewHolder = new SearchUserAdapter.CustomViewHolder(view);
         return viewHolder;
     }
 
@@ -73,21 +70,19 @@ public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.Cust
             title = view.findViewById(R.id.title);
         }
 
-
     }
 
 
     @Override
-    public void onBindViewHolder(final Discover_Adapter.CustomViewHolder holder, final int i) {
-
-        Discover_Get_Set item = datalist_filter.get(i);
+    public void onBindViewHolder(final SearchUserAdapter.CustomViewHolder holder, final int i) {
+//        datalist_filter.clear();
+        SearchModel item = datalist_filter.get(i);
 
         holder.title.setText(item.title);
 
         Horizontal_Adapter adapter = new Horizontal_Adapter(context, item.arrayList);
         holder.horizontal_reycerview.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         holder.horizontal_reycerview.setAdapter(adapter);
-
 
     }
 
@@ -102,8 +97,8 @@ public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.Cust
                 if (charString.isEmpty()) {
                     datalist_filter = datalist;
                 } else {
-                    ArrayList<Discover_Get_Set> filteredList = new ArrayList<>();
-                    for (Discover_Get_Set row : datalist) {
+                    ArrayList<SearchModel> filteredList = new ArrayList<>();
+                    for (SearchModel row : datalist) {
 
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for name or phone number match
@@ -122,7 +117,7 @@ public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.Cust
             }
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                datalist_filter = (ArrayList<Discover_Get_Set>) filterResults.values;
+                datalist_filter = (ArrayList<SearchModel>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -132,10 +127,10 @@ public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.Cust
     class Horizontal_Adapter extends RecyclerView.Adapter<Horizontal_Adapter.CustomViewHolder> {
         public Context context;
 
-        ArrayList<Home_Get_Set> datalist;
+        ArrayList<HomeModel> datalist;
 
 
-        public Horizontal_Adapter(Context context, ArrayList<Home_Get_Set> arrayList) {
+        public Horizontal_Adapter(Context context, ArrayList<HomeModel> arrayList) {
             this.context = context;
             datalist = arrayList;
         }
@@ -164,7 +159,7 @@ public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.Cust
 
             }
 
-            public void bind(final int pos, final ArrayList<Home_Get_Set> datalist) {
+            public void bind(final int pos, final ArrayList<HomeModel> datalist) {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -181,22 +176,21 @@ public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.Cust
             holder.setIsRecyclable(false);
 
             try {
-                Home_Get_Set item = datalist.get(i);
+                HomeModel item = datalist.get(i);
                 holder.bind(i, datalist);
 
-
-
                 try {
-                Glide.with(context)
+                    Picasso.with(context).load(item.thumb).resize(100, 100).centerCrop().into(holder.video_thumbnail);
+               /* Glide.with(context)
                         .asGif()
-                        .load(item.gif)
+                        .load(item.docName)
                         .skipMemoryCache(true)
-                        .thumbnail(new RequestBuilder[]{Glide
+                     *//*   .thumbnail(new RequestBuilder[]{Glide
                         .with(context)
-                        .load(item.thum)})
+                        .load(item.thum)})*//*
                         .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE)
                                 .placeholder(context.getResources().getDrawable(R.drawable.image_placeholder)).centerCrop())
-                        .into(holder.video_thumbnail);
+                        .into(holder.video_thumbnail);*/
 
             }catch (Exception e){
 

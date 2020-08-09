@@ -250,7 +250,7 @@ public class Comment_F extends RootFragment {
             e.printStackTrace();
         }
 
-        ApiRequest.Call_Api(context,Variables.sendPushNotification,notimap,null);
+       // ApiRequest.Call_Api(context,Variables.sendPushNotification,notimap,null);
 
     }
 

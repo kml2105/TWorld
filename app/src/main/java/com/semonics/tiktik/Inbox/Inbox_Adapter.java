@@ -108,7 +108,7 @@ public class Inbox_Adapter extends RecyclerView.Adapter<Inbox_Adapter.CustomView
         Picasso.with(context).
                 load(item.getPic())
                 .resize(100,100)
-                .placeholder(R.drawable.profile_image_placeholder).into(holder.user_image);
+                .placeholder(R.drawable.user_profile).into(holder.user_image);
 
 
         // check the status like if the message is seen by the receiver or not

@@ -6,16 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
-
-import com.semonics.tiktik.Chat.Chat_Activity;
-import com.google.android.material.tabs.TabLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.os.Handler;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -24,14 +14,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.semonics.tiktik.Discover.Discover_F;
-import com.semonics.tiktik.Home.Home_F;
-import com.semonics.tiktik.Inbox.Inbox_F;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
+import com.semonics.tiktik.Chat.Chat_Activity;
+import com.semonics.tiktik.Discover.SearchFragment;
+import com.semonics.tiktik.Home.HomeFragment;
 import com.semonics.tiktik.Main_Menu.RelateToFragment_OnBack.OnBackPressListener;
 import com.semonics.tiktik.Main_Menu.RelateToFragment_OnBack.RootFragment;
+import com.semonics.tiktik.Notifications.Notification_F;
 import com.semonics.tiktik.Profile.Profile_Tab_F;
 import com.semonics.tiktik.R;
 import com.semonics.tiktik.SimpleClasses.Variables;
@@ -46,6 +44,10 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
 
     private ViewPagerAdapter adapter;
     Context context;
+    private HomeFragment homeFragment;
+    private SearchFragment searchFragment;
+    private Notification_F notificationFragment;
+    private Profile_Tab_F profileFragment;
 
 
     public MainMenuFragment() {
@@ -61,7 +63,37 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
         context=getContext();
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         pager = view.findViewById(R.id.viewpager);
-        pager.setOffscreenPageLimit(5);
+        pager.setOffscreenPageLimit(2);
+        pager.setCurrentItem(0);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                if(position == 0 && homeFragment != null){
+                    homeFragment.apiCall();
+                }
+                if(position ==1  && searchFragment != null){
+                    searchFragment.searchApi();
+                }
+
+                if(position ==3  && notificationFragment != null){
+                    notificationFragment.apiCall();
+                }
+                if(position==4 && profileFragment!=null){
+                    profileFragment.apiCall();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         pager.setPagingEnabled(false);
         view.setOnClickListener(this);
 
@@ -137,40 +169,32 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
         imageView5.setImageDrawable(getResources().getDrawable(R.drawable.ic_profile_gray));
         imageView5.setColorFilter(ContextCompat.getColor(context, R.color.colorwhite_50), android.graphics.PorterDuff.Mode.SRC_IN);
         tabLayout.getTabAt(4).setCustomView(view5);
-
-
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
-
 
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 View v=tab.getCustomView();
                 ImageView image=v.findViewById(R.id.image);
-               // TextView  title=v.findViewById(R.id.text);
-
                 switch (tab.getPosition()){
                     case 0:
                         OnHome_Click();
-                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_white));
+                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_gray));
+                        image.setColorFilter(ContextCompat.getColor(context, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
                         break;
-
                     case 1:
                         Onother_Tab_Click();
-                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_discover_red));
-                        image.setColorFilter(ContextCompat.getColor(context, R.color.app_color), android.graphics.PorterDuff.Mode.SRC_IN);
+                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_discovery_gray));
+                        image.setColorFilter(ContextCompat.getColor(context, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
                         break;
-
-
                     case 3:
                         Onother_Tab_Click();
-                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_notification_red));
-                        image.setColorFilter(ContextCompat.getColor(context, R.color.app_color), android.graphics.PorterDuff.Mode.SRC_IN);
+                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_notification_gray));
+                        image.setColorFilter(ContextCompat.getColor(context, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
                         break;
                     case 4:
                         Onother_Tab_Click();
-                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_profile_red));
-                        image.setColorFilter(ContextCompat.getColor(context, R.color.app_color), android.graphics.PorterDuff.Mode.SRC_IN);
-                        //title.setTextColor(context.getResources().getColor(R.color.app_color));
+                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_profile_gray));
+                        image.setColorFilter(ContextCompat.getColor(context, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
                         break;
                 }
                 tab.setCustomView(v);
@@ -185,20 +209,15 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
                 switch (tab.getPosition()){
                     case 0:
                         image.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_gray));
-//                        title.setTextColor(context.getResources().getColor(R.color.darkgray));
                         break;
                     case 1:
                         image.setImageDrawable(getResources().getDrawable(R.drawable.ic_discovery_gray));
-                       // title.setTextColor(context.getResources().getColor(R.color.darkgray));
                         break;
-
                     case 3:
                         image.setImageDrawable(getResources().getDrawable(R.drawable.ic_notification_gray));
-                       // title.setTextColor(context.getResources().getColor(R.color.darkgray));
                         break;
                     case 4:
                         image.setImageDrawable(getResources().getDrawable(R.drawable.ic_profile_gray));
-                      //  title.setTextColor(context.getResources().getColor(R.color.darkgray));
                         break;
                 }
                 tab.setCustomView(v);
@@ -329,34 +348,32 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
 
         @Override
         public Fragment getItem(int position) {
-            final Fragment result;
+          //  final Fragment result;
             switch (position) {
                 case 0:
-                    result = new Home_F();
-                    break;
+                    homeFragment = new HomeFragment();
+                    return homeFragment;
 
                 case 1:
-                    result = new Discover_F();
-                    break;
+                    searchFragment = new SearchFragment();
+                    return searchFragment;
 
                 case 2:
-                    result=new BlankFragment();
-                    break;
+                    BlankFragment blankFragment =new BlankFragment();
+                    return blankFragment;
 
                 case 3:
-                    result = new Inbox_F();
-                    break;
+                    notificationFragment = new Notification_F();
+                    return notificationFragment;
 
                 case 4:
-                    result = new Profile_Tab_F();
-                    break;
+                    profileFragment = new Profile_Tab_F();
+                    return profileFragment;
 
                 default:
-                    result = null;
-                    break;
+                   return null;
             }
 
-            return result;
         }
 
         @Override
@@ -441,7 +458,7 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
         TabLayout.Tab tab2=tabLayout.getTabAt(2);
         View view2=tab2.getCustomView();
         ImageView image= view2.findViewById(R.id.image);
-        image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_add_black));
+        image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_add_white));
         tab2.setCustomView(view2);
 
         TabLayout.Tab tab3=tabLayout.getTabAt(3);

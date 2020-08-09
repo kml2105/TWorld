@@ -14,8 +14,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import androidx.annotation.Nullable;
 
-import com.semonics.tiktik.SimpleClasses.ApiRequest;
-import com.semonics.tiktik.SimpleClasses.Callback;
+import com.semonics.tiktik.Model.Music;
+import com.semonics.tiktik.Model.UserDetails;
+import com.semonics.tiktik.SimpleClasses.Utils;
 import com.semonics.tiktik.SoundLists.VideoSound_A;
 import com.google.android.material.tabs.TabLayout;
 
@@ -46,7 +47,7 @@ import android.widget.Toast;
 import com.daasuu.gpuv.composer.GPUMp4Composer;
 import com.daasuu.gpuv.egl.filter.GlWatermarkFilter;
 import com.semonics.tiktik.Comments.Comment_F;
-import com.semonics.tiktik.Home.Home_Get_Set;
+import com.semonics.tiktik.Home.HomeModel;
 import com.semonics.tiktik.KeyBoard.KeyboardHeightObserver;
 import com.semonics.tiktik.KeyBoard.KeyboardHeightProvider;
 import com.semonics.tiktik.Main_Menu.MainMenuActivity;
@@ -85,6 +86,9 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.semonics.tiktik.WebService.BaseAPIService;
+import com.semonics.tiktik.WebService.ResponseListener;
+import com.semonics.tiktik.WebService.WSParams;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
 
 import org.json.JSONArray;
@@ -93,7 +97,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import static com.semonics.tiktik.WebService.WSParams.METHOD_GET;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_GET_DOC_FOR_YOU;
+import static com.semonics.tiktik.WebService.WSParams.WS_KEY_OBJ;
 
 
 /**
@@ -106,7 +115,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
     Context context;
 
     RecyclerView recyclerView;
-    ArrayList<Home_Get_Set> data_list;
+    ArrayList<HomeModel> data_list;
     int position=0;
     int currentPage=-1;
     LinearLayoutManager layoutManager;
@@ -138,9 +147,9 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
         setContentView(R.layout.fragment_watchvideo);
         context=this;
 
-        if(Variables.sharedPreferences==null){
+      /*  if(Variables.sharedPreferences==null){
             Variables.sharedPreferences=getSharedPreferences(Variables.pref_name,Context.MODE_PRIVATE);
-        }
+        }*/
 
         p_bar=findViewById(R.id.p_bar);
 
@@ -152,7 +161,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
             Uri appLinkData = bundle.getData();
 
             if(appLinkData==null){
-                data_list = (ArrayList<Home_Get_Set>) bundle.getSerializableExtra("arraylist");
+                data_list = (ArrayList<HomeModel>) bundle.getSerializableExtra("arraylist");
                  position=bundle.getIntExtra("position",0);
                  Set_Adapter();
 
@@ -160,7 +169,8 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                 String link=appLinkData.toString();
                 String[] parts = link.split("=");
                 video_id=parts[1];
-                Call_Api_For_get_Allvideos(parts[1]);
+                apiCall();
+             //   Call_Api_For_get_Allvideos(parts[1]);
             }
         }
 
@@ -229,17 +239,17 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
 
 
-        ApiRequest.Call_Api(context, Variables.showAllVideos, parameters, new Callback() {
+        /*ApiRequest.Call_Api(context, Variables.showAllVideos, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 Parse_data(resp);
             }
-        });
+        });*/
 
 
     }
 
-    public void Parse_data(String responce){
+  /*  public void Parse_data(String responce){
 
         data_list=new ArrayList<>();
 
@@ -295,39 +305,106 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
         }
 
     }
+*/
+
+    public void apiCall() {
+        try {
+            new BaseAPIService(this, SERVICE_GET_DOC_FOR_YOU, null, true, responseListener, METHOD_GET, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    ResponseListener responseListener = new ResponseListener() {
+        @Override
+        public void onSuccess(String res) {
+            try {
+                data_list = new ArrayList<>();
+                JSONObject jsonObject = new JSONObject(res);
+                int code = jsonObject.optInt(WSParams.WS_KEY_CODE);
+                JSONArray array = jsonObject.getJSONArray(WS_KEY_OBJ);
+                if (code == 200) {
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject itemdata = array.optJSONObject(i);
+                        HomeModel item = new HomeModel();
+                        item.id = itemdata.optString("_id");
+                        JSONObject user_info = itemdata.optJSONObject("userDetails");
+                        UserDetails userDetails = new UserDetails();
+                        userDetails.firstName = user_info.optString("firstName");
+                        userDetails.lastName = user_info.optString("lastName");
+                        userDetails.profilePic = user_info.optString("profilePic");
+                        item.userDetails = userDetails;
+
+
+                        JSONObject sound_data = itemdata.optJSONObject("music");
+                        if(sound_data!=null){
+                            Music musicModel = new Music();
+                            musicModel.id = sound_data.optString("_id");
+                            musicModel.musicName = sound_data.optString("musicName");
+                            musicModel.thumb = sound_data.optString("thumb");
+                            item.music = musicModel;
+                        }
+
+                        item.likeCount = itemdata.optInt("likeCount");
+                        item.commentCount = itemdata.optInt("commentCount");
+                        JSONArray hashTagArray = itemdata.getJSONArray("hashTag");
+                        String[] hashtags = new String[hashTagArray.length()];
+                        for (int a = 0; a < hashTagArray.length(); a++) {
+                            hashtags[a]= hashTagArray.getString(a);
+                        }
+                        List<String> hashtagList = Arrays.asList(hashtags);
+                        item.hashTag = hashtagList;
+                        item.location = itemdata.optString("location");
+                        item.docName =/*Variables.base_url+*/itemdata.optString("docName");
+                        item.caption = itemdata.optString("caption");
+                        item.createdDate = itemdata.optInt("createdDate");
+                        data_list.add(item);
+                    }
+                    Set_Adapter();
+                }
+               /* } else {
+                    methodToast(context, msg);
+                }*/
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(String error) {
+            Utils.methodToast(context, error);
+        }
+    };
 
 
 
-
-
-
-    private void Call_Api_For_Singlevideos(final int postion) {
+ /*   private void Call_Api_For_Singlevideos(final int postion) {
 
         try {
             JSONObject parameters = new JSONObject();
 
             parameters.put("fb_id", Variables.sharedPreferences.getString(Variables.u_id,"0"));
             parameters.put("token",Variables.sharedPreferences.getString(Variables.device_token,"Null"));
-            parameters.put("video_id",data_list.get(postion).video_id);
+            parameters.put("video_id",data_list.get(postion).id);
 
 
 
 
-            ApiRequest.Call_Api(context, Variables.showAllVideos, parameters, new Callback() {
+            *//*ApiRequest.Call_Api(context, Variables.showAllVideos, parameters, new Callback() {
                 @Override
                 public void Responce(String resp) {
-                    Singal_Video_Parse_data(postion,resp);
+                    //Singal_Video_Parse_data(postion,resp);
                 }
-            });
+            });*//*
 
         } catch (JSONException e) {
             e.printStackTrace();
         }catch (Exception e){
 
         }
-    }
+    }*/
 
-    public void Singal_Video_Parse_data(int pos,String responce){
+  /*  public void Singal_Video_Parse_data(int pos,String responce){
 
         try {
             JSONObject jsonObject=new JSONObject(responce);
@@ -381,7 +458,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
             e.printStackTrace();
         }
 
-    }
+    }*/
 
 
     public void Set_Adapter(){
@@ -396,7 +473,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
         adapter=new Watch_Videos_Adapter(context, data_list, new Watch_Videos_Adapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int postion,final Home_Get_Set item, View view) {
+            public void onItemClick(int postion, final HomeModel item, View view) {
 
                 switch(view.getId()){
 
@@ -419,7 +496,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                         break;
 
                     case R.id.shared_layout:
-                        final VideoAction_F fragment = new VideoAction_F(item.video_id, new Fragment_Callback() {
+                        final VideoAction_F fragment = new VideoAction_F(item.id, new Fragment_Callback() {
                             @Override
                             public void Responce(Bundle bundle) {
 
@@ -511,10 +588,8 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
                     String comment_txt = message_edit.getText().toString();
                     if (!TextUtils.isEmpty(comment_txt)) {
-                        Send_Comments(data_list.get(currentPage).fb_id,data_list.get(currentPage).video_id, comment_txt);
+                       // Send_Comments(data_list.get(currentPage).fb_id,data_list.get(currentPage).video_id, comment_txt);
                     }
-
-
 
                // }
                 /*else {
@@ -530,8 +605,8 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
     @Override
     public void onDataSent(String yourData) {
         int comment_count =Integer.parseInt(yourData);
-        Home_Get_Set item=data_list.get(currentPage);
-        item.video_comment_count=""+comment_count;
+        HomeModel item=data_list.get(currentPage);
+        item.commentCount=comment_count;
         data_list.add(currentPage,item);
         adapter.notifyDataSetChanged();
     }
@@ -540,16 +615,16 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
     public void Set_Player(final int currentPage){
 
-        final Home_Get_Set item= data_list.get(currentPage);
+        final HomeModel item= data_list.get(currentPage);
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
         final SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "TikTok"));
 
         MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(Uri.parse(item.video_url));
+                .createMediaSource(Uri.parse(item.docName));
 
-        Log.d(Variables.tag,item.video_url);
+        Log.d(Variables.tag,item.docName);
 
 
         player.prepare(videoSource);
@@ -656,12 +731,10 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
         soundimage.startAnimation(aniRotate);
 
         if(Variables.sharedPreferences.getBoolean(Variables.islogin,false))
-            Functions.Call_Api_For_update_view(WatchVideos_F.this,item.video_id);
+            Functions.Call_Api_For_update_view(WatchVideos_F.this,item.id);
+        apiCall();
 
-
-
-
-        Call_Api_For_Singlevideos(currentPage);
+//        Call_Api_For_Singlevideos(currentPage);
     }
 
 
@@ -677,7 +750,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
 
 
-    public void Show_heart_on_DoubleTap(Home_Get_Set item,final RelativeLayout mainlayout,MotionEvent e){
+    public void Show_heart_on_DoubleTap(HomeModel item, final RelativeLayout mainlayout, MotionEvent e){
 
         int x = (int) e.getX()-100;
         int y = (int) e.getY()-100;
@@ -687,7 +760,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
         final ImageView iv = new ImageView(getApplicationContext());
         lp.setMargins(x, y, 0, 0);
         iv.setLayoutParams(lp);
-        if(item.liked.equals("1"))
+        if(item.like==1)
             iv.setImageDrawable(getResources().getDrawable(
                     R.drawable.ic_like));
         else
@@ -720,26 +793,26 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
 
     // this function will call for like the video and Call an Api for like the video
-    public void Like_Video(final int position, final Home_Get_Set home_get_set){
+    public void Like_Video(final int position, final HomeModel home_model){
 
-        String action=home_get_set.liked;
+        String action= home_model.like.toString();
 
         if(action.equals("1")){
             action="0";
-            home_get_set.like_count=""+(Integer.parseInt(home_get_set.like_count) -1);
+            home_model.likeCount= home_model.likeCount -1;
         }else {
             action="1";
-            home_get_set.like_count=""+(Integer.parseInt(home_get_set.like_count) +1);
+            home_model.likeCount= home_model.likeCount +1;
         }
 
 
         data_list.remove(position);
-        home_get_set.liked=action;
-        data_list.add(position,home_get_set);
+        home_model.like= Integer.valueOf(action);
+        data_list.add(position, home_model);
         adapter.notifyDataSetChanged();
 
 
-        Functions.Call_Api_For_like_video(this, home_get_set.video_id,action ,new API_CallBack() {
+        Functions.Call_Api_For_like_video(this, home_model.id,action ,new API_CallBack() {
 
             @Override
             public void ArrayData(ArrayList arrayList) {
@@ -797,16 +870,16 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
 
     // this will open the comment screen
-    public void OpenComment(Home_Get_Set item) {
-        int comment_count=Integer.parseInt(item.video_comment_count);
+    public void OpenComment(HomeModel item) {
+        int comment_count=item.commentCount;
         Fragment_Data_Send fragment_data_send=this;
 
         Comment_F comment_f = new Comment_F(comment_count,fragment_data_send);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
         Bundle args = new Bundle();
-        args.putString("video_id",item.video_id);
-        args.putString("user_id",item.fb_id);
+        args.putString("video_id",item.id);
+        //args.putString("user_id",item.fb_id);
         comment_f.setArguments(args);
         transaction.addToBackStack(null);
         transaction.replace(R.id.WatchVideo_F, comment_f).commit();
@@ -816,9 +889,9 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
 
     // this will open the profile of user which have uploaded the currenlty running video
-    private void OpenProfile(Home_Get_Set item,boolean from_right_to_left) {
+    private void OpenProfile(HomeModel item, boolean from_right_to_left) {
 
-        if(Variables.sharedPreferences.getString(Variables.u_id,"0").equals(item.fb_id)){
+        if(Variables.sharedPreferences.getString(Variables.u_id,"0").equals(item.id)){//user id
 
             TabLayout.Tab profile= MainMenuFragment.tabLayout.getTabAt(4);
             profile.select();
@@ -829,7 +902,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                 @Override
                 public void Responce(Bundle bundle) {
 
-                    Call_Api_For_Singlevideos(currentPage);
+                  //  Call_Api_For_Singlevideos(currentPage);
 
                 }
             });
@@ -841,9 +914,9 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                 transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
 
             Bundle args = new Bundle();
-            args.putString("user_id", item.fb_id);
+        /*    args.putString("user_id", item.fb_id);
             args.putString("user_name",item.first_name+" "+item.last_name);
-            args.putString("user_pic",item.profile_pic);
+            args.putString("user_pic",item.profile_pic);*/
             profile_f.setArguments(args);
             transaction.addToBackStack(null);
             transaction.replace(R.id.WatchVideo_F, profile_f).commit();
@@ -868,7 +941,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                 send_progress.setVisibility(View.GONE);
                 send_btn.setVisibility(View.VISIBLE);
 
-                int comment_count=Integer.parseInt(data_list.get(currentPage).video_comment_count);
+                int comment_count=data_list.get(currentPage).commentCount;
                 comment_count++;
                 onDataSent(""+comment_count);
 
@@ -908,11 +981,11 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
 
     CharSequence[] options;
-    private void Show_video_option(final Home_Get_Set home_get_set) {
+    private void Show_video_option(final HomeModel home_model) {
 
          options = new CharSequence[]{ "Save Video","Cancel" };
 
-         if(home_get_set.fb_id.equals(Variables.sharedPreferences.getString(Variables.u_id,"")))
+       //  if(home_get_set.fb_id.equals(Variables.sharedPreferences.getString(Variables.u_id,"")))
         options = new CharSequence[]{"Save Video", "Delete Video", "Cancel"};
 
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context,R.style.AlertDialogCustom);
@@ -928,14 +1001,14 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                 if (options[item].equals("Save Video"))
                 {
                     if(Functions.Checkstoragepermision(WatchVideos_F.this))
-                        Save_Video(home_get_set);
+                        Save_Video(home_model);
 
                 }
 
                 else if(options[item].equals("Delete Video")){
 
                     Functions.Show_loader(WatchVideos_F.this,false,false);
-                    Functions.Call_Api_For_Delete_Video(WatchVideos_F.this, home_get_set.video_id, new API_CallBack() {
+                    Functions.Call_Api_For_Delete_Video(WatchVideos_F.this, home_model.id, new API_CallBack() {
                         @Override
                         public void ArrayData(ArrayList arrayList) {
 
@@ -971,11 +1044,11 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
     }
 
-    public void Save_Video(final Home_Get_Set item){
+    public void Save_Video(final HomeModel item){
 
         Functions.Show_determinent_loader(context,false,false);
         PRDownloader.initialize(getApplicationContext());
-        DownloadRequest prDownloader= PRDownloader.download(item.video_url, Environment.getExternalStorageDirectory() +"/Tittic/", item.video_id+"no_watermark"+".mp4")
+        DownloadRequest prDownloader= PRDownloader.download(item.docName, Environment.getExternalStorageDirectory() +"/Tittic/", item.id+"no_watermark"+".mp4")
                 .build()
                 .setOnStartOrResumeListener(new OnStartOrResumeListener() {
                     @Override
@@ -1027,13 +1100,13 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
     }
 
-    public void Applywatermark(final Home_Get_Set item){
+    public void Applywatermark(final HomeModel item){
 
         Bitmap myLogo = ((BitmapDrawable)getResources().getDrawable(R.drawable.ic_watermark_image)).getBitmap();
         Bitmap bitmap_resize=Bitmap.createScaledBitmap(myLogo, 50, 50, false);
         GlWatermarkFilter filter=new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.LEFT_TOP);
-        new GPUMp4Composer(Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+"no_watermark"+".mp4",
-                Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+".mp4")
+        new GPUMp4Composer(Environment.getExternalStorageDirectory() +"/Tittic/"+item.id+"no_watermark"+".mp4",
+                Environment.getExternalStorageDirectory() +"/Tittic/"+item.id+".mp4")
                 .filter(filter)
 
                 .listener(new GPUMp4Composer.Listener() {
@@ -1093,16 +1166,16 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
     }
 
 
-    public void Delete_file_no_watermark(Home_Get_Set item){
-        File file=new File(Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+"no_watermark"+".mp4");
+    public void Delete_file_no_watermark(HomeModel item){
+        File file=new File(Environment.getExternalStorageDirectory() +"/Tittic/"+item.id+"no_watermark"+".mp4");
         if(file.exists()){
             file.delete();
         }
     }
 
-    public void Scan_file(Home_Get_Set item){
+    public void Scan_file(HomeModel item){
         MediaScannerConnection.scanFile(WatchVideos_F.this,
-                new String[] { Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+".mp4" },
+                new String[] { Environment.getExternalStorageDirectory() +"/Tittic/"+item.id+".mp4" },
                 null,
                 new MediaScannerConnection.OnScanCompletedListener() {
 
@@ -1129,7 +1202,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
             e.printStackTrace();
         }
 
-        ApiRequest.Call_Api(context,Variables.sendPushNotification,notimap,null);
+       // ApiRequest.Call_Api(context,Variables.sendPushNotification,notimap,null);
 
     }
 

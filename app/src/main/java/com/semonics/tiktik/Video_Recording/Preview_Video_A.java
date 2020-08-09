@@ -40,8 +40,7 @@ import com.google.android.exoplayer2.util.Util;
 import java.util.List;
 
 public class Preview_Video_A extends AppCompatActivity  implements Player.EventListener {
-
-
+    int videoDuration;
     String video_url;
 
     GPUPlayerView gpuPlayerView;
@@ -53,6 +52,7 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
     RecyclerView recylerview;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +62,6 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
         select_postion=0;
 
         video_url= Variables.outputfile2;
-
 
 
         findViewById(R.id.Goback).setOnClickListener(new View.OnClickListener() {
@@ -261,6 +260,7 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
     public void GotopostScreen(){
 
         Intent intent =new Intent(Preview_Video_A.this,Post_Video_A.class);
+        intent.putExtra("videoDuration", videoDuration);
         startActivity(intent);
         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 

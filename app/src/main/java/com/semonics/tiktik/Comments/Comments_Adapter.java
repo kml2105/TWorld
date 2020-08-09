@@ -63,7 +63,7 @@ public class Comments_Adapter extends RecyclerView.Adapter<Comments_Adapter.Cust
         Picasso.with(context).
                 load(item.profile_pic)
                 .resize(50,50)
-                .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
+                .placeholder(context.getResources().getDrawable(R.drawable.user_profile))
                 .into(holder.user_pic);
 
        }catch (Exception e){

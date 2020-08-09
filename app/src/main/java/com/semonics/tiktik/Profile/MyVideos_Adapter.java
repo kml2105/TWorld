@@ -10,10 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.semonics.tiktik.Home.Home_Get_Set;
+import com.semonics.tiktik.Home.HomeModel;
 import com.semonics.tiktik.R;
 
 import java.util.ArrayList;
@@ -28,14 +27,14 @@ public class MyVideos_Adapter extends RecyclerView.Adapter<MyVideos_Adapter.Cust
 
     public Context context;
     private MyVideos_Adapter.OnItemClickListener listener;
-    private ArrayList<Home_Get_Set> dataList;
+    private ArrayList<HomeModel> dataList;
 
 
       public interface OnItemClickListener {
-        void onItemClick(int postion, Home_Get_Set item, View view);
+        void onItemClick(int postion, HomeModel item, View view);
     }
 
-    public MyVideos_Adapter(Context context, ArrayList<Home_Get_Set> dataList, MyVideos_Adapter.OnItemClickListener listener) {
+    public MyVideos_Adapter(Context context, ArrayList<HomeModel> dataList, MyVideos_Adapter.OnItemClickListener listener) {
         this.context = context;
         this.dataList = dataList;
         this.listener = listener;
@@ -62,17 +61,17 @@ public class MyVideos_Adapter extends RecyclerView.Adapter<MyVideos_Adapter.Cust
 
         ImageView thumb_image;
 
-        TextView view_txt;
+        TextView view_count;
 
         public CustomViewHolder(View view) {
             super(view);
 
             thumb_image=view.findViewById(R.id.thumb_image);
-            view_txt=view.findViewById(R.id.view_txt);
+            view_count=view.findViewById(R.id.view_count);
 
         }
 
-        public void bind(final int position,final Home_Get_Set item, final MyVideos_Adapter.OnItemClickListener listener) {
+        public void bind(final int position, final HomeModel item, final MyVideos_Adapter.OnItemClickListener listener) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -89,7 +88,7 @@ public class MyVideos_Adapter extends RecyclerView.Adapter<MyVideos_Adapter.Cust
 
     @Override
     public void onBindViewHolder(final MyVideos_Adapter.CustomViewHolder holder, final int i) {
-        final Home_Get_Set item= dataList.get(i);
+        final HomeModel item= dataList.get(i);
         holder.setIsRecyclable(false);
 
 
@@ -97,11 +96,11 @@ public class MyVideos_Adapter extends RecyclerView.Adapter<MyVideos_Adapter.Cust
         try {
             Glide.with(context)
                     .asGif()
-                    .load(item.gif)
+                    .load(item.docName)
                     .skipMemoryCache(true)
-                     .thumbnail(new RequestBuilder[]{Glide
+                   /*  .thumbnail(new RequestBuilder[]{Glide
                              .with(context)
-                             .load(item.thum)})
+                             .load(item.docName)})*/
                     .apply(RequestOptions.diskCacheStrategyOf( DiskCacheStrategy.RESOURCE)
                             .placeholder(context.getResources().getDrawable(R.drawable.image_placeholder)).centerCrop())
 
@@ -111,9 +110,7 @@ public class MyVideos_Adapter extends RecyclerView.Adapter<MyVideos_Adapter.Cust
 
         }
 
-
-
-        holder.view_txt.setText(item.views);
+        holder.view_count.setText(item.viewerCount+"");
 
         holder.bind(i,item,listener);
 

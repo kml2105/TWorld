@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
-    android:backgroundTint="#000"
     android:background="@color/black"
+    android:backgroundTint="#000"
+    android:padding="20dp"
     tools:context="com.semonics.tiktik.Accounts.LoginActivity">
 
     <LinearLayout
+        android:id="@+id/ll_login_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ll_login_main"
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
@@ -39,9 +39,9 @@
             android:background="@drawable/login_border"
             android:hint="@string/email_mobile_no"
             android:padding="10dp"
-            android:textSize="12sp"
             android:textColor="#fff"
-            android:textColorHint="#fff" />
+            android:textColorHint="#fff"
+            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/activity_log_in_et_password"
@@ -50,31 +50,25 @@
             android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
             android:alpha="0.7"
-            android:enabled="true"
-            android:textSize="12sp"
             android:background="@drawable/login_border"
+            android:enabled="true"
             android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="10dp"
             android:textColor="#fff"
-            android:textColorHint="#fff" />
+            android:textColorHint="#fff"
+            android:textSize="12sp" />
+
         <TextView
             android:layout_width="wrap_content"
-            android:layout_marginTop="15dp"
             android:layout_height="wrap_content"
-            android:textAlignment="textEnd"
             android:layout_gravity="end"
+            android:id="@+id/tv_forgot_pw"
+            android:layout_marginTop="15dp"
             android:text="@string/forgotPW"
+            android:textAlignment="textEnd"
             android:textColor="#fff"
             android:textSize="12sp" />
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/progress_bar"
-            android:visibility="invisible"
-            android:layout_gravity="center_horizontal"
-            android:theme="@style/Progressbar_style"
-   />
 
         <Button
             android:id="@+id/activity_log_in_btn_log_in"
@@ -88,33 +82,60 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_marginTop="15dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="15dp"
             android:text="@string/or"
+            android:layout_marginBottom="15dp"
             android:textColor="#fff"
             android:textSize="15sp" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/login_button"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@color/com_facebook_blue"
+                android:gravity="center"
+                android:textAllCaps="false" />
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/ll_login_main"
         android:layout_gravity="bottom"
-        android:gravity="center|bottom"
-        android:layout_height="match_parent">
+        android:gravity="center|bottom">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:text="@string/DontHaveAnAccount" />
+            android:text="@string/DontHaveAnAccount"
+            android:textSize="15sp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:textColor="@color/com_facebook_blue"
-            android:layout_height="wrap_content"
             android:id="@+id/tv_sign_up"
-            android:textSize="18sp"
-            android:text="@string/sign_up" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up"
+            android:textColor="@color/com_facebook_blue"
+            android:textSize="18sp" />
     </LinearLayout>
 </RelativeLayout>

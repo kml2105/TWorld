@@ -46,6 +46,7 @@
                 android:textStyle="bold" />
 
 
+
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -80,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/every_one"
                 android:textColor="@color/white"
-                android:id="@+id/radioButton"
+                android:id="@+id/rbEveryone"
                 android:layout_marginBottom="8dp"
                 android:buttonTint="@color/white"
                 android:layout_gravity="center_horizontal"
@@ -92,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/people_follow_you"
                 android:layout_marginBottom="8dp"
-                android:id="@+id/radioButton2"
+                android:id="@+id/rbPplFollowYou"
                 android:textColor="@color/white"
                 android:buttonTint="@color/white"
                 android:layout_gravity="center_horizontal"
@@ -104,7 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/no_one"
-                android:id="@+id/radioButton3"
+                android:id="@+id/rbNoOne"
                 android:buttonTint="@color/white"
                 android:textColor="@color/white"
                 android:layout_gravity="center_horizontal"
@@ -113,6 +114,14 @@
                 />
         </RadioGroup>
 
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment_comment2_pb"
+            android:layout_gravity="center"></ProgressBar>
+
+<!--
         <LinearLayout
             android:id="@+id/video_download"
             android:layout_width="match_parent"
@@ -139,7 +148,7 @@
                 android:layout_height="wrap_content"
                 android:checked="false"
                 />
-        </LinearLayout>
+        </LinearLayout>-->
     </LinearLayout>
 
 </RelativeLayout>

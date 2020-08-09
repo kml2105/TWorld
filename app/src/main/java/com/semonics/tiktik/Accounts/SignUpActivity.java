@@ -1,54 +1,47 @@
 package com.semonics.tiktik.Accounts;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.semonics.tiktik.Main_Menu.MainMenuActivity;
 import com.semonics.tiktik.Model.CountryModel;
 import com.semonics.tiktik.R;
-import com.semonics.tiktik.SimpleClasses.SessionManager;
-import com.semonics.tiktik.SimpleClasses.TicTic;
-import com.semonics.tiktik.SimpleClasses.Utils;
 import com.semonics.tiktik.WebService.BaseAPIService;
 import com.semonics.tiktik.WebService.RequestParams;
 import com.semonics.tiktik.WebService.ResponseListener;
+import com.semonics.tiktik.WebService.SessionManager;
+import com.semonics.tiktik.WebService.TicTic;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import static com.semonics.tiktik.SimpleClasses.SessionManager.PREF_IS_LOGIN;
-import static com.semonics.tiktik.SimpleClasses.SessionManager.PREF_TOKEN;
 import static com.semonics.tiktik.SimpleClasses.Utils.methodToast;
-import static com.semonics.tiktik.SimpleClasses.WSParams.WS_KEY_TOKEN;
+import static com.semonics.tiktik.WebService.SessionManager.PREF_IS_LOGIN;
+import static com.semonics.tiktik.WebService.SessionManager.PREF_TOKEN;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_ADD_USER;
+import static com.semonics.tiktik.WebService.WSParams.WS_KEY_TOKEN;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView tvLogIn,tvCountryName;
+    private TextView tvLogIn, tvCountryName;
     private ImageView ivCountryImg;
     private LinearLayout llCountry;
-    private EditText etUserName,etPw;
+    private EditText etUserName, etPw;
     private SessionManager sessionManager;
     private Button btnSignUp;
 
@@ -60,8 +53,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         llCountry = findViewById(R.id.activity_sign_up_ll_country);
         tvCountryName = findViewById(R.id.activity_sign_up_tv_country_name);
         ivCountryImg = findViewById(R.id.activity_sign_up_iv_country);
-        etUserName=findViewById(R.id.activity_sign_up_email);
-        etPw=findViewById(R.id.activity_sign_up_password);
+        etUserName = findViewById(R.id.activity_sign_up_email);
+        etPw = findViewById(R.id.activity_sign_up_password);
         sessionManager = TicTic.getInstance().getSession();
         btnSignUp = findViewById(R.id.btn_sign_up);
         btnSignUp.setOnClickListener(this);
@@ -88,7 +81,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // do something here
                 tvCountryName.setText(mList.get(position).getCountryName());
-                Picasso.with(SignUpActivity.this).load(mList.get(position).getCountryImg()).resize(400,400).centerCrop().into(ivCountryImg);
+                Picasso.with(SignUpActivity.this).load(mList.get(position).getCountryImg()).resize(400, 400).centerCrop().into(ivCountryImg);
 
             }
         });
@@ -100,18 +93,19 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         builder.show();
     }
 
-    private void validation(){
-        if(etUserName.getText().toString().isEmpty()){
-            methodToast(SignUpActivity.this,"Please enter user name.");
-        }else if(etPw.getText().toString().isEmpty()){
-            methodToast(SignUpActivity.this,"Please enter password.");
-        }else{
+    private void validation() {
+        if (etUserName.getText().toString().isEmpty()) {
+            methodToast(SignUpActivity.this, "Please enter user name.");
+        } else if (etPw.getText().toString().isEmpty()) {
+            methodToast(SignUpActivity.this, "Please enter password.");
+        } else {
             apiCall();
         }
     }
+
     public void apiCall() {
         try {
-            new BaseAPIService(SignUpActivity.this, "addUser", RequestParams.getLogin(etUserName.getText().toString().trim(), etPw.getText().toString().trim()), responseListener, true);
+            new BaseAPIService(SignUpActivity.this, SERVICE_ADD_USER, RequestParams.addUser(etUserName.getText().toString().trim(), etPw.getText().toString().trim()), false, responseListener, "POST", true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,11 +120,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 // String msg = jsonObject.getString(API_MSG);
                 //if (code == 200) {
                 String token = jsonObject.getString(WS_KEY_TOKEN);
-                Log.e("token:",token);
-                sessionManager.putString(PREF_TOKEN,token);
-                sessionManager.setBoolean(PREF_IS_LOGIN,true);
+                Log.e("token:", token);
+                sessionManager.putString(PREF_TOKEN, token);
+                sessionManager.setBoolean(PREF_IS_LOGIN, true);
                 Intent i = new Intent(SignUpActivity.this, MainMenuActivity.class);
-                if(getIntent().getExtras()!=null) {
+                if (getIntent().getExtras() != null) {
                     i.putExtras(getIntent().getExtras());
                     setIntent(null);
                 }
@@ -147,15 +141,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onFailure(String error) {
-            methodToast(SignUpActivity.this, "error");
+            methodToast(SignUpActivity.this, error);
         }
     };
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tv_log_in:
                 Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                if(getIntent().getExtras()!=null) {
+                if (getIntent().getExtras() != null) {
                     intent.putExtras(getIntent().getExtras());
                     setIntent(null);
                 }
