@@ -124,7 +124,7 @@ SessionManager sessionManager;
 
     public void apiCall() {
         try {
-            new BaseAPIService(context, SERVICE_GET_USER, null, false, responseListener, METHOD_GET, true);
+            new BaseAPIService(context, SERVICE_GET_USER, null, false, responseListener, METHOD_GET, false);
         } catch (Exception e) {
             e.printStackTrace();
         }

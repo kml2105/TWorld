@@ -1,4 +1,4 @@
-package com.semonics.tiktik.Discover;
+package com.semonics.tiktik.Search;
 
 import android.content.Context;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Created by AQEEL on 3/20/2018.
  */
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchUserAdapter.CustomViewHolder > implements Filterable {
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.CustomViewHolder > implements Filterable {
     public Context context;
 
     ArrayList<SearchModel> datalist;
@@ -32,9 +32,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchUserAdapter.Custom
         void onItemClick(ArrayList<HomeModel> video_list, int postion);
     }
 
-    public SearchUserAdapter.OnItemClickListener listener;
+    public SearchAdapter.OnItemClickListener listener;
 
-    public SearchAdapter(Context context, ArrayList<SearchModel> arrayList, SearchUserAdapter.OnItemClickListener listener) {
+    public SearchAdapter(Context context, ArrayList<SearchModel> arrayList, SearchAdapter.OnItemClickListener listener) {
         this.context = context;
         datalist = arrayList;
         datalist_filter=arrayList;
@@ -43,10 +43,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchUserAdapter.Custom
 
 
     @Override
-    public SearchUserAdapter.CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewtype) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_discover_layout, viewGroup, false);
+    public SearchAdapter.CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewtype) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_search_layout, viewGroup, false);
         view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
-        SearchUserAdapter.CustomViewHolder viewHolder = new SearchUserAdapter.CustomViewHolder(view);
+        SearchAdapter.CustomViewHolder viewHolder = new SearchAdapter.CustomViewHolder(view);
         return viewHolder;
     }
 
@@ -74,7 +74,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchUserAdapter.Custom
 
 
     @Override
-    public void onBindViewHolder(final SearchUserAdapter.CustomViewHolder holder, final int i) {
+    public void onBindViewHolder(final SearchAdapter.CustomViewHolder holder, final int i) {
 //        datalist_filter.clear();
         SearchModel item = datalist_filter.get(i);
 

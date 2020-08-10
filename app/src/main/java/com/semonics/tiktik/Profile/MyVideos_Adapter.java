@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.semonics.tiktik.Home.HomeModel;
 import com.semonics.tiktik.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -94,16 +95,9 @@ public class MyVideos_Adapter extends RecyclerView.Adapter<MyVideos_Adapter.Cust
 
 
         try {
-            Glide.with(context)
-                    .asGif()
-                    .load(item.docName)
-                    .skipMemoryCache(true)
-                   /*  .thumbnail(new RequestBuilder[]{Glide
-                             .with(context)
-                             .load(item.docName)})*/
-                    .apply(RequestOptions.diskCacheStrategyOf( DiskCacheStrategy.RESOURCE)
-                            .placeholder(context.getResources().getDrawable(R.drawable.image_placeholder)).centerCrop())
-
+            Picasso.with(context).load(item.thumb)
+                    .resize(100,100)
+                    .placeholder(R.drawable.user_profile)
                     .into(holder.thumb_image);
 
         }catch (Exception e){

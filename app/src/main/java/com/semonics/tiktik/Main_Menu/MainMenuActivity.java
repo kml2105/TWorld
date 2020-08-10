@@ -59,10 +59,6 @@ public class MainMenuActivity extends AppCompatActivity {
         } else {
             mainMenuFragment = (MainMenuFragment) getSupportFragmentManager().getFragments().get(0);
         }
-
-
-
-
     }
 
 
@@ -79,11 +75,6 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
-
 
     @Override
     public void onBackPressed() {
@@ -104,12 +95,4 @@ public class MainMenuActivity extends AppCompatActivity {
         }
 
     }
-
-
-
-
-
-
-
-
 }

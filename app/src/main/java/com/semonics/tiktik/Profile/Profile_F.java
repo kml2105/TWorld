@@ -69,7 +69,6 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
     String user_id, user_name, user_pic;
 
-    // Bundle bundle;
 
     protected TabLayout tabLayout;
 
@@ -83,6 +82,8 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
     RelativeLayout tabs_main_layout;
 
     LinearLayout top_layout;
+    private UserVideo_F userVideoFragment;
+    private Liked_Video_F likedVideoFragment;
 
 
     public static String pic_url;
@@ -194,6 +195,28 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         pager = view.findViewById(R.id.pager);
         pager.setOffscreenPageLimit(2);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                if (position == 0 && userVideoFragment != null) {
+                    userVideoFragment.apiCall();
+                }
+                if (position == 1 && likedVideoFragment != null) {
+                    likedVideoFragment.apiCall();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         adapter = new ViewPagerAdapter(getResources(), getChildFragmentManager());
         pager.setAdapter(adapter);
@@ -330,28 +353,23 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
         @Override
         public Fragment getItem(int position) {
-            final Fragment result;
             switch (position) {
                 case 0:
-                    result = new UserVideo_F();
-                    break;
+                    userVideoFragment = new UserVideo_F();
+                    return userVideoFragment;
                 case 1:
-                    result = new Liked_Video_F();
-                    break;
+                    likedVideoFragment = new Liked_Video_F();
+                    return likedVideoFragment;
 
                 default:
-                    result = null;
-                    break;
+                    return userVideoFragment;
             }
-
-            return result;
         }
 
         @Override
         public int getCount() {
             return 2;
         }
-
 
         @Override
         public CharSequence getPageTitle(final int position) {

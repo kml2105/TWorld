@@ -108,6 +108,7 @@ public class Liked_Video_F extends Fragment {
                         item.location = itemData.optString("location");
                         item.docName =/*Variables.base_url+*/itemData.optString("docName");
                         item.caption = itemData.optString("caption");
+                        item.thumb = itemData.optString("thumb");
                         item.createdDate = itemData.optInt("createdDate");
                         data_list.add(item);
                         adapter.notifyDataSetChanged();
@@ -145,7 +146,7 @@ public class Liked_Video_F extends Fragment {
             @Override
             public void onItemClick(int postion, HomeModel item, View view) {
 
-                OpenWatchVideo(postion);
+                OpenWatchVideo(postion,data_list);
 
             }
         });
@@ -154,7 +155,7 @@ public class Liked_Video_F extends Fragment {
 
 
         no_data_layout = view.findViewById(R.id.no_data_layout);
-        apiCall();
+        //apiCall();
 
         return view;
     }
@@ -169,9 +170,9 @@ public class Liked_Video_F extends Fragment {
     }
 
 
-    private void OpenWatchVideo(int postion) {
+    private void OpenWatchVideo(int postion,ArrayList<HomeModel> list) {
         Intent intent = new Intent(getActivity(), WatchVideos_F.class);
-        intent.putExtra("arraylist", data_list);
+        intent.putExtra("arraylist", list);
         intent.putExtra("position", postion);
         startActivity(intent);
     }

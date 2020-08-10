@@ -1,4 +1,4 @@
-package com.semonics.tiktik.Discover;
+package com.semonics.tiktik.Search;
 
 import com.semonics.tiktik.Home.HomeModel;
 

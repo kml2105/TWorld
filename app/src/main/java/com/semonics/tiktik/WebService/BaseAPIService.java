@@ -27,6 +27,8 @@ import static com.semonics.tiktik.SimpleClasses.Utils.showProgressDialog;
 import static com.semonics.tiktik.WebService.WSParams.SERVICE_ALL_LIKED_VIDEO;
 import static com.semonics.tiktik.WebService.WSParams.SERVICE_ALL_VIDEO;
 import static com.semonics.tiktik.WebService.WSParams.SERVICE_GET_DOC_FOR_YOU;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_SEARCH_ALL;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_SEARCH_MUSIC;
 import static com.semonics.tiktik.WebService.WSParams.SERVICE_SEARCH_VIDEO;
 import static com.semonics.tiktik.WebService.WSParams.WS_KEY_BEARER;
 import static com.semonics.tiktik.WebService.WSParams.WS_KEY_CODE;
@@ -73,6 +75,9 @@ public class BaseAPIService {
         this.responseListener = responseListener;
         if (Utils.isNetworkAvailable(this.context)) {
             showLog("URL", module);
+            if (isShowProgress) {
+                showProgressDialog(context);
+            }
             processMultiPartRequest(module, multipartBody, requestBody);
         } else {
             responseListener.onFailure(context.getResources().getString(R.string.no_internet_connection));
@@ -97,7 +102,7 @@ public class BaseAPIService {
             case "GET":
                 if (module.equals(SERVICE_GET_DOC_FOR_YOU) || module.contains(SERVICE_ALL_VIDEO) || module.contains(SERVICE_ALL_LIKED_VIDEO)) {
                     call = RetrofitBuilder.getWebService().doRequestGetWithPagination(token, module, 0, 10);
-                } else if (module.contains(SERVICE_SEARCH_VIDEO)) {
+                } else if (module.contains(SERVICE_SEARCH_VIDEO) || module.contains(SERVICE_SEARCH_ALL)||module.contains(SERVICE_SEARCH_MUSIC)) {
                     String keyword = sessionManager.getString(SessionManager.PREF_SEARCH_KEYWORD);
                     call = RetrofitBuilder.getWebService().doRequestGetForSearchWithPagination(token, module, keyword, 0, 10);
                 } else {

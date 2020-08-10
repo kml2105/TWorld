@@ -98,6 +98,7 @@ public class UserVideo_F extends Fragment {
                         }
 
                         item.likeCount = itemdata.optInt("likeCount");
+                        item.thumb = itemdata.optString("thumb");
                         item.viewerCount = itemdata.optInt("viewerCount");
                         item.commentCount = itemdata.optInt("commentCount");
                         JSONArray hashTagArray = itemdata.getJSONArray("hashTag");
@@ -145,7 +146,7 @@ public class UserVideo_F extends Fragment {
         adapter = new MyVideos_Adapter(context, data_list, new MyVideos_Adapter.OnItemClickListener() {
             @Override
             public void onItemClick(int postion, HomeModel item, View view) {
-              //  OpenWatchVideo(postion);
+                OpenWatchVideo(postion,data_list);
             }
         });
 
@@ -153,7 +154,7 @@ public class UserVideo_F extends Fragment {
 
         no_data_layout = view.findViewById(R.id.no_data_layout);
         sessionManager = TicTic.getInstance().getSession();
-        apiCall();
+        //apiCall();
 
         return view;
 
@@ -282,9 +283,9 @@ public class UserVideo_F extends Fragment {
     }*/
 
 
-    private void OpenWatchVideo(int postion) {
+    private void OpenWatchVideo(int postion,ArrayList<HomeModel> list) {
         Intent intent = new Intent(getActivity(), WatchVideos_F.class);
-        intent.putExtra("arraylist", data_list);
+        intent.putExtra("arraylist", list);
         intent.putExtra("position", postion);
         startActivity(intent);
     }

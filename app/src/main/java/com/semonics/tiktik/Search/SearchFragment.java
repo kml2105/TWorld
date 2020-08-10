@@ -1,4 +1,4 @@
-package com.semonics.tiktik.Discover;
+package com.semonics.tiktik.Search;
 
 
 import android.content.Context;
@@ -10,13 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.semonics.tiktik.Following.Following_Adapter;
 import com.semonics.tiktik.Home.HomeModel;
 import com.semonics.tiktik.Main_Menu.RelateToFragment_OnBack.RootFragment;
 import com.semonics.tiktik.Model.Music;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import static com.semonics.tiktik.WebService.WSParams.METHOD_GET;
-import static com.semonics.tiktik.WebService.WSParams.SERVICE_SEARCH_VIDEO;
+import static com.semonics.tiktik.WebService.WSParams.SERVICE_SEARCH_ALL;
 import static com.semonics.tiktik.WebService.WSParams.WS_KEY_OBJ;
 
 /**
@@ -50,7 +51,11 @@ public class SearchFragment extends RootFragment {
     RecyclerView recyclerView;
     EditText search_edit;
     SessionManager sessionManager;
-
+    private LinearLayout llSearch;
+    private LinearLayout llVideos;
+    private LinearLayout llMusic;
+    private LinearLayout llHashTag;
+    private LinearLayout llUsers;
 
     SwipeRefreshLayout swiperefresh;
 
@@ -60,41 +65,33 @@ public class SearchFragment extends RootFragment {
 
     ArrayList<String> list = new ArrayList<>();
     ArrayList<SearchModel> datalist;
-
-    SearchUserAdapter adapter;
+    SearchAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_discover, container, false);
+        view = inflater.inflate(R.layout.fragment_search, container, false);
         context = getContext();
-
-
         datalist = new ArrayList<>();
-
         sessionManager = TicTic.getInstance().getSession();
         recyclerView = (RecyclerView) view.findViewById(R.id.recylerview);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-
-        adapter = new SearchUserAdapter(context, datalist, new SearchUserAdapter.OnItemClickListener() {
+        adapter = new SearchAdapter(context, datalist, new SearchAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(ArrayList<HomeModel> datalist, int postion) {
                 OpenWatchVideo(postion, datalist);
             }
         });
-
-
         recyclerView.setAdapter(adapter);
-
-
         search_edit = view.findViewById(R.id.search_edit);
         search_edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                llSearch.setVisibility(View.GONE);
+                swiperefresh.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -103,17 +100,39 @@ public class SearchFragment extends RootFragment {
                 String query = search_edit.getText().toString();
                 if (adapter != null)
                     adapter.getFilter().filter(query);
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                llSearch.setVisibility(View.VISIBLE);
+                swiperefresh.setVisibility(View.GONE);
             }
         });
-
-
         swiperefresh = view.findViewById(R.id.swiperefresh);
+        llVideos = view.findViewById(R.id.fragment_search_ll_video);
+        llVideos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchVideoFragment TargetFragment=new SearchVideoFragment(1);
+                FragmentTransaction transaction=getFragmentManager().beginTransaction();
+                transaction.replace(R.id.main_content,TargetFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+        llMusic = view.findViewById(R.id.fragment_search_ll_music);
+        llMusic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchVideoFragment TargetFragment=new SearchVideoFragment(2);
+                FragmentTransaction transaction=getFragmentManager().beginTransaction();
+                transaction.replace(R.id.main_content,TargetFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+        llHashTag = view.findViewById(R.id.fragment_search_ll_hashtag);
+        llUsers = view.findViewById(R.id.fragment_search_ll_user);
         swiperefresh.setColorSchemeResources(R.color.black);
         swiperefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -121,17 +140,13 @@ public class SearchFragment extends RootFragment {
                 searchApi();
             }
         });
-
-        //searchApi();
-
         return view;
     }
-
 
     public void searchApi() {
         sessionManager.putString(SessionManager.PREF_SEARCH_KEYWORD, search_edit.getText().toString());
         try {
-            new BaseAPIService(context, SERVICE_SEARCH_VIDEO, null, false, responseListener, METHOD_GET, true);
+            new BaseAPIService(context, SERVICE_SEARCH_ALL, null, false, responseListener, METHOD_GET, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -225,12 +240,12 @@ public class SearchFragment extends RootFragment {
                     datalist.add(searchModel);
 
                 }
-                if(hashTags!=null){
+                if (hashTags != null) {
                     SearchModel searchModel = new SearchModel();
                     Iterator iterator = hashTags.keys();
-                    while(iterator.hasNext()){
-                        String key = (String)iterator.next();
-                        searchModel.title="#"+key;
+                    while (iterator.hasNext()) {
+                        String key = (String) iterator.next();
+                        searchModel.title = "#" + key;
                         JSONArray arr = hashTags.getJSONArray(key);
                         ArrayList<HomeModel> arrayList = new ArrayList<>();
                         for (int i = 0; i < arr.length(); i++) {
@@ -269,9 +284,23 @@ public class SearchFragment extends RootFragment {
                         datalist.add(searchModel);
                     }
                 }
-                if(userArray.length()>=1){
-
-                }
+              /*  if (userArray.length() >= 1) {
+                    SearchModel searchModel = new SearchModel();
+                    searchModel.title = "Users";
+                    ArrayList<Following_Get_Set> list = new ArrayList<>();
+                    for (int i = 0; i <userArray.length();i++) {
+                        JSONObject object = documentArray.optJSONObject(i);
+                        Following_Get_Set following_get_set = new Following_Get_Set();
+                        following_get_set.userID = object.getString("_id");
+                        following_get_set.username = object.getString("username");
+                        following_get_set.first_name = object.getString("firstName");
+                        following_get_set.last_name = object.getString("lastName");
+                        following_get_set.profile_pic = object.getString("profilePic");
+                        following_get_set.follow = object.getString("follow");
+                        list.add(following_get_set);
+                    }
+                    datalist.add(searchModel);
+                }*/
 
                 adapter.notifyDataSetChanged();
             } catch (Exception e) {
@@ -285,7 +314,6 @@ public class SearchFragment extends RootFragment {
         }
     };
 
-
     // When you click on any Video a new activity is open which will play the Clicked video
     private void OpenWatchVideo(int postion, ArrayList<HomeModel> data_list) {
 
@@ -293,6 +321,5 @@ public class SearchFragment extends RootFragment {
         intent.putExtra("arraylist", data_list);
         intent.putExtra("position", postion);
         startActivity(intent);
-
     }
 }

@@ -62,12 +62,14 @@ public class WSParams {
     public static String SERVICE_ALL_LIKED_VIDEO = MODULE_DOC + MODULE_LIKE + MODULE_ALL;
     public static String SERVICE_ALL_VIDEO = MODULE_DOC + SERVICE_GET_USER;
     public static String SERVICE_LIKE_VIDEO = MODULE_DOC + MODULE_LIKE;
-    public static String SERVICE_SEARCH_VIDEO = "search";
+    public static String SERVICE_SEARCH_ALL = "search";
     public static String SERVICE_GET_FOLLOWING_LIST = MODULE_FOLLOW + "following";
     public static String SERVICE_GET_FOLLOWERS_LIST = MODULE_FOLLOW + "followers";
     public static String SERVICE_GET_PENDING_REQ = MODULE_FOLLOW + "pendingRequest";
     public static String SERVICE_GET_PENDING_REQ_COUNT = MODULE_FOLLOW + MODULE_REQUEST_COUNT + "user";
     public static String SERVICE_UNFOLLOW = "unfollow";
     public static String SERVICE_FORGOT_PW = MODULE_USER + "forgotPassword";
+    public static String SERVICE_SEARCH_VIDEO = MODULE_DOC + SERVICE_SEARCH_ALL;
+    public static String SERVICE_SEARCH_MUSIC = MODULE_DOC + "musicSearch";
 }
 
