@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.semonics.tiktik">
+    package="com.semonics.tworld">
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature
@@ -25,7 +25,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name=".WebService.TicTic"
+        android:name="com.semonics.tworld.WebService.TWorld"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -38,29 +38,29 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="allowBackup,supportsRtl">
-        <activity android:name=".Accounts.ForgotPasswordActivity"></activity>
+        <activity android:name="com.semonics.tworld.Accounts.ForgotPasswordActivity"></activity>
         <activity
-            android:name=".Accounts.SignUpActivity"
+            android:name="com.semonics.tworld.Accounts.SignUpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/transparent_status"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".SoundLists.VideoSound_A" />
+        <activity android:name="com.semonics.tworld.SoundLists.VideoSound_A" />
         <activity
-            android:name=".Video_Recording.GalleryVideos.GalleryVideos_A"
+            android:name="com.semonics.tworld.Video_Recording.GalleryVideos.GalleryVideos_A"
             android:screenOrientation="portrait"
             android:theme="@style/white_status"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Video_Recording.GallerySelectedVideo.GallerySelectedVideo_A"
+            android:name="com.semonics.tworld.Video_Recording.GallerySelectedVideo.GallerySelectedVideo_A"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Accounts.LoginActivity"
+            android:name="com.semonics.tworld.Accounts.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/transparent_status"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".SplashActivity"
+            android:name="com.semonics.tworld.SplashActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
@@ -70,14 +70,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Main_Menu.MainMenuActivity"
+            android:name="com.semonics.tworld.Main_Menu.MainMenuActivity"
             android:screenOrientation="portrait"
             android:theme="@style/transparent_status"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".WatchVideos.WatchVideos_F"
-            android:parentActivityName=".Main_Menu.MainMenuActivity"
+            android:name="com.semonics.tworld.WatchVideos.WatchVideos_F"
+            android:parentActivityName="com.semonics.tworld.Main_Menu.MainMenuActivity"
             android:screenOrientation="portrait"
             android:theme="@style/transparent_status"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
@@ -96,7 +96,7 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.semonics.tiktik.Main_Menu.MainMenuActivity" />
+                android:value="com.semonics.tworld.Main_Menu.MainMenuActivity" />
         </activity>
 
         <meta-data
@@ -138,20 +138,20 @@
         </activity>
         -->
         <activity
-            android:name=".Video_Recording.Video_Recoder_A"
+            android:name="com.semonics.tworld.Video_Recording.Video_Recoder_A"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Video_Recording.Preview_Video_A"
+            android:name="com.semonics.tworld.Video_Recording.Preview_Video_A"
             android:screenOrientation="portrait"
             android:theme="@style/black_status"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".Video_Recording.Post_Video_A"
+            android:name="com.semonics.tworld.Video_Recording.Post_Video_A"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".SoundLists.SoundList_Main_A"
+            android:name="com.semonics.tworld.SoundLists.SoundList_Main_A"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
 
@@ -180,7 +180,7 @@
         </provider>
 
         <service
-            android:name=".Services.UploadVideoService"
+            android:name="com.semonics.tworld.Services.UploadVideoService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

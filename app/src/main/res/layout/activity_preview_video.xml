@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.semonics.tiktik.Video_Recording.Preview_Video_A">
+    tools:context="com.semonics.tworld.Video_Recording.Preview_Video_A">
 
 
-<com.semonics.tiktik.Video_Recording.MovieWrapperView
+<com.semonics.tworld.Video_Recording.MovieWrapperView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/layout_movie_wrapper"/>

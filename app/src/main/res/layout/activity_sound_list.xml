@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.semonics.tiktik.SoundLists.Discover_SoundList_F">
+    tools:context="com.semonics.tworld.SoundLists.Discover_SoundList_F">
 
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

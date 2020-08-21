@@ -19,7 +19,7 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        applicationId "com.semonics.tiktik"
+        applicationId "com.semonics.tworld"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 22

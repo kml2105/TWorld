@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     android:paddingTop="24dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.semonics.tiktik.Profile.Edit_Profile_F">
+    tools:context="com.semonics.tworld.Profile.Edit_Profile_F">
 
 
     <RelativeLayout

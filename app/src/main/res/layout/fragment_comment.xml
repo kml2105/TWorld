@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     android:id="@+id/comment_screen"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.semonics.tiktik.Comments.Comment_F">
+    tools:context="com.semonics.tworld.Comments.Comment_F">
 
     <androidx.percentlayout.widget.PercentRelativeLayout
          android:layout_width="match_parent"

@@ -127,7 +127,7 @@
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:src="@drawable/ic_mention" />
+                    android:src="@drawable/ic_tag" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -135,7 +135,7 @@
                     android:drawablePadding="0dp"
                     android:padding="15dp"
                     android:drawableEnd="@drawable/ic_right_arrow"
-                    android:text="@string/mention"
+                    android:text="@string/tag"
                     android:textColor="@color/white"
                     android:textSize="15dp"
                     android:textStyle="bold" />

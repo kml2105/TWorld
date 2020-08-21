@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "151904112962",
-    "firebase_url": "https://tiktik-7d085.firebaseio.com",
-    "project_id": "tiktik-7d085",
-    "storage_bucket": "tiktik-7d085.appspot.com"
+    "project_number": "161526664203",
+    "firebase_url": "https://tworld-8fa02.firebaseio.com",
+    "project_id": "tworld-8fa02",
+    "storage_bucket": "tworld-8fa02.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:151904112962:android:e85a7a77bf885f410378db",
+        "mobilesdk_app_id": "1:161526664203:android:1272fcdf47a23018a98b0e",
         "android_client_info": {
-          "package_name": "com.semonics.tiktik"
+          "package_name": "com.semonics.tworld"
         }
       },
       "oauth_client": [
         {
-          "client_id": "151904112962-viicd4tl5g3dkbgh0ii9avkfgtunt3qt.apps.googleusercontent.com",
+          "client_id": "161526664203-9sm1emsqdmgc2sedpshds23ij3gu8rdb.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDqkfzqBCG_CU3GBk7kc1DcuS1w-Avogl4"
+          "current_key": "AIzaSyAzaFU-MezVorLBkBnDm_p3S_gDfhO7akE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "151904112962-viicd4tl5g3dkbgh0ii9avkfgtunt3qt.apps.googleusercontent.com",
+              "client_id": "161526664203-9sm1emsqdmgc2sedpshds23ij3gu8rdb.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

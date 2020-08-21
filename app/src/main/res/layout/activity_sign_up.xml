@@ -1,67 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
-    android:backgroundTint="#000"
     android:background="@color/black"
-    tools:context="com.semonics.tiktik.Accounts.SignUpActivity">
+    android:backgroundTint="#000"
+    android:padding="20dp"
+    tools:context="com.semonics.tworld.Accounts.SignUpActivity">
 
     <LinearLayout
+        android:id="@+id/ll_sign_up_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ll_sign_up_main"
-        android:backgroundTint="#000"
         android:layout_centerInParent="true"
+        android:backgroundTint="#000"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/lblHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="10dp"
-            android:gravity="center_horizontal"
-            android:padding="20dp"
-            android:text="T World"
-            android:textColor="#fff"
-            android:textSize="36sp"
-            android:textStyle="bold" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/app_name_icon_white" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
             android:id="@+id/activity_sign_up_ll_country"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/login_border"
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <ImageView
-                android:layout_width="40dp"
-                android:src="@drawable/com_facebook_button_icon"
                 android:id="@+id/activity_sign_up_iv_country"
-                android:layout_height="40dp" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/com_facebook_button_icon" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:text="Select Country"
                 android:id="@+id/activity_sign_up_tv_country_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:layout_height="wrap_content" />
+                android:text="@string/select_country" />
         </LinearLayout>
+
         <EditText
             android:id="@+id/activity_sign_up_email"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
-            android:textSize="12sp"
-            android:enabled="true"
             android:background="@drawable/login_border"
+            android:enabled="true"
             android:hint="@string/email_mobile_no"
             android:padding="10dp"
             android:textColor="#fff"
-            android:textColorHint="#fff" />
+            android:textColorHint="#fff"
+            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/activity_sign_up_password"
@@ -69,55 +65,57 @@
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
-            android:enabled="true"
             android:background="@drawable/login_border"
-            android:hint="Password"
-            android:textSize="12sp"
+            android:enabled="true"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="10dp"
             android:textColor="#fff"
-            android:textColorHint="#fff" />
+            android:textColorHint="#fff"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/com_facebook_blue"
-            android:text="Sign Up"
+            android:background="@drawable/login_border"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="@string/sign_up"
             android:textAllCaps="false"
             android:textColor="#fff" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_marginTop="15dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="OR"
+            android:layout_marginTop="15dp"
+            android:text="@string/or"
             android:textColor="#fff"
             android:textSize="15sp" />
 
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/ll_sign_up_main"
         android:layout_gravity="bottom"
-        android:gravity="center|bottom"
-        android:layout_height="match_parent">
+        android:gravity="center|bottom">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:text="Already have an account ?  " />
+            android:text="@string/already_have_an_account"
+            android:textSize="15sp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:textColor="@color/com_facebook_blue"
-            android:layout_height="wrap_content"
             android:id="@+id/tv_log_in"
-            android:textSize="18sp"
-            android:text="Log In" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/log_in"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp" />
     </LinearLayout>
 </RelativeLayout>

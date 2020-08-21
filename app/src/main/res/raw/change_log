@@ -7,5 +7,4 @@ Toast.makeText(context, "Something wrong with Api", Toast.LENGTH_SHORT).show();
 then remove that line.
 
 
-com.dinosoftlabs.tictic.SimpleClasses >> ApiRequest.java
 manifest.xml file.

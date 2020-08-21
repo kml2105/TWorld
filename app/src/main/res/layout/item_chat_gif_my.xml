@@ -15,7 +15,7 @@
         android:id="@+id/datetxt"/>
 
 
-       <com.semonics.tiktik.Chat.RoundCornersImageView
+       <com.semonics.tworld.Chat.RoundCornersImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:id="@+id/chatimage"

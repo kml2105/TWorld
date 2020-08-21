@@ -9,7 +9,7 @@
     android:id="@+id/Chat_F"
     android:fitsSystemWindows="true"
     android:paddingTop="24dp"
-    tools:context="com.semonics.tiktik.Chat.Chat_Activity">
+    tools:context="com.semonics.tworld.Chat.Chat_Activity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

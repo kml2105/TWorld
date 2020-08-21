@@ -51,7 +51,7 @@
                     android:background="@color/transparent"
                     android:scaleType="fitCenter"
                     android:backgroundTint="@color/black"
-                    android:src="@drawable/ic_settings" />
+                    android:src="@drawable/ic_setting" />
 
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>

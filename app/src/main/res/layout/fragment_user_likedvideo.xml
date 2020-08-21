@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context="com.semonics.tiktik.Profile.UserVideos.UserVideo_F">
+    tools:context="com.semonics.tworld.Profile.UserVideos.UserVideo_F">
 
   <RelativeLayout
       android:layout_width="match_parent"

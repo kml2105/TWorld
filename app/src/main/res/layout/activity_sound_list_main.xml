@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.semonics.tiktik.SoundLists.SoundList_Main_A">
+    tools:context="com.semonics.tworld.SoundLists.SoundList_Main_A">
 
 
     <RelativeLayout
@@ -71,13 +71,13 @@
                 android:layout_marginLeft="-1dp"
                 app:tabIndicatorColor="@color/black"/>
 
-            <com.semonics.tiktik.Main_Menu.Custom_ViewPager
+            <com.semonics.tworld.Main_Menu.Custom_ViewPager
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/viewpager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_below="@+id/groups_tab">
-            </com.semonics.tiktik.Main_Menu.Custom_ViewPager>
+            </com.semonics.tworld.Main_Menu.Custom_ViewPager>
 
 
         </RelativeLayout>

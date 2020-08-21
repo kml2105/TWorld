@@ -20,9 +20,11 @@
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
         android:background="@color/white">
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
+            android:orientation="horizontal"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:background="@drawable/d_bottom_gray_line">
 
             <ImageButton
@@ -37,7 +39,17 @@
                 android:tint="@color/black"
                 android:background="@color/transparent"/>
 
-        </RelativeLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:text="@string/sound"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
 
