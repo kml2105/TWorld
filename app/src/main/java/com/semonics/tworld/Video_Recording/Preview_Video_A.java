@@ -217,12 +217,8 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
                                 Functions.cancel_determinent_loader();
 
                                 GotopostScreen();
-
-
                             }
                         });
-
-
                     }
 
                     @Override
@@ -263,10 +259,7 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
         intent.putExtra("videoDuration", videoDuration);
         startActivity(intent);
         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-
     }
-
-
 
     // Bottom all the function and the Call back listener of the Expo player
     @Override

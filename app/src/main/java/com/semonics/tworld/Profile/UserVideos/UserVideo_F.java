@@ -154,7 +154,7 @@ public class UserVideo_F extends Fragment {
 
         no_data_layout = view.findViewById(R.id.no_data_layout);
         sessionManager = TWorld.getInstance().getSession();
-        apiCall();
+        //apiCall();
 
         return view;
 

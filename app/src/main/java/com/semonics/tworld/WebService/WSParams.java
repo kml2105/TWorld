@@ -48,7 +48,7 @@ public class WSParams {
 
     /*service name*/
     public static String MODULE_DOC = "document/";
-    public static String MODULE_COMMENT= "comment/";
+    public static String MODULE_COMMENT = "comment/";
     public static String MODULE_FOLLOW = "follow/";
     public static String MODULE_USER = "user/";
     public static String MODULE_LIKE = "like/";
@@ -56,6 +56,7 @@ public class WSParams {
     public static String MODULE_NOTIFICATION = "notification/";
     public static String MODULE_COUNT = "count/";
     public static String MODULE_SEEN = "seen/";
+    public static String MODULE_FORGOT_PASSWORD = "ForgotPassword/";
     public static String MODULE_REQUEST_COUNT = "requestCount/";
     public static String SERVICE_UPLOAD_DOC = "document";
     public static String SERVICE_AUTHENTICATE = "authenticate";
@@ -68,7 +69,7 @@ public class WSParams {
     public static String SERVICE_ALL_VIDEO = MODULE_DOC + SERVICE_GET_USER;
     public static String SERVICE_LIKE_VIDEO = MODULE_DOC + MODULE_LIKE;
     public static String SERVICE_SEARCH_ALL = "search";
-    public static String SERVICE_GET_MENTIONED_LIST = MODULE_USER + "metioned";
+    public static String SERVICE_GET_MENTIONED_LIST = MODULE_USER + "mentioned";
     public static String SERVICE_GET_FOLLOWING_LIST = MODULE_FOLLOW + "following";
     public static String SERVICE_GET_FOLLOWERS_LIST = MODULE_FOLLOW + "followers";
     public static String SERVICE_GET_PENDING_REQ = MODULE_FOLLOW + "pendingRequest";
@@ -82,6 +83,11 @@ public class WSParams {
     public static String SERVICE_SEARCH_VIDEO = MODULE_DOC + SERVICE_SEARCH_ALL;
     public static String SERVICE_SEARCH_MUSIC = MODULE_DOC + "musicSearch";
     public static String SERVICE_SEARCH_USER = SERVICE_GET_USER + "/" + SERVICE_SEARCH_ALL;
-    public static String SERVICE_GET_ALL_COMMENT_LIST = MODULE_COMMENT +MODULE_DOC;
+    public static String SERVICE_GET_ALL_COMMENT_LIST = MODULE_COMMENT + MODULE_DOC;
+    public static String SERVICE_VERIFY_OTP = MODULE_USER + MODULE_FORGOT_PASSWORD;
+    public static String SERVICE_UPDATE_PASSWORD = MODULE_USER + "password";
+    public static String SERVICE_ADD_DEVICE = "device";
+    public static String SERVICE_UPLOAD_PROFILE_PIC = MODULE_USER + "profile";
+    public static String SERVICE_SEND_COMMENT = MODULE_COMMENT;
 }
 

@@ -60,4 +60,6 @@
     <string name="log_in"> Log In</string>
     <string name="there_is_no_data_available">There is No Data Available.</string>
     <string name="sound">Sound</string>
+    <string name="verify_otp">Verify OTP</string>
+    <string name="verify">Verify</string>
 </resources>

@@ -31,7 +31,6 @@ public class RequestParams {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(WSParams.WS_USER_NAME, user_name);
             jsonObject.put(WSParams.WS_PASSWORD, password);
-          //   jsonObject.put(WSParams.WS_DEVICE_ID, deviceId);
             showLog(TAG_REQUEST, jsonObject.toString());
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse(WS_KEY_DATA_PARSE_TYPE), jsonObject.toString());
             return body;
@@ -45,6 +44,20 @@ public class RequestParams {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(WSParams.WS_EMAIL_OR_MOBILE, email);
+            showLog(TAG_REQUEST, jsonObject.toString());
+            RequestBody body = RequestBody.create(okhttp3.MediaType.parse(WS_KEY_DATA_PARSE_TYPE), jsonObject.toString());
+            return body;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static RequestBody updatePassword(String uName,String password) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(WSParams.WS_USER_NAME, uName);
+            jsonObject.put(WSParams.WS_PASSWORD, password);
             showLog(TAG_REQUEST, jsonObject.toString());
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse(WS_KEY_DATA_PARSE_TYPE), jsonObject.toString());
             return body;
@@ -81,6 +94,19 @@ public class RequestParams {
         }
     }
 
+    public static RequestBody addComment(String comment) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("comment",comment);
+            showLog(TAG_REQUEST, jsonObject.toString());
+            RequestBody body = RequestBody.create(okhttp3.MediaType.parse(WS_KEY_DATA_PARSE_TYPE), jsonObject.toString());
+            return body;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return  null;
+        }
+
+    }
     public static RequestBody likeVideo() {
         JSONObject jsonObject = new JSONObject();
         showLog(TAG_REQUEST, jsonObject.toString());

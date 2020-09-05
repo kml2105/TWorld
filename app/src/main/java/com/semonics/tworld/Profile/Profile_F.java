@@ -197,6 +197,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         pager = view.findViewById(R.id.pager);
         pager.setOffscreenPageLimit(2);
+        userVideoFragment.apiCall();
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -265,7 +266,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         view.findViewById(R.id.fans_layout).setOnClickListener(this);
         isdataload = true;
         apiCall();
-        userVideoFragment.apiCall();
+       // userVideoFragment.apiCall();
         //Call_Api_For_get_Allvideos();
         return view;
     }

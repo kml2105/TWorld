@@ -9,23 +9,22 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission
         android:name="android.permission.MANAGE_DOCUMENTS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECORD_VIDEO" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name="com.semonics.tworld.WebService.TWorld"
+        android:name=".WebService.TWorld"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -38,29 +37,31 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="allowBackup,supportsRtl">
-        <activity android:name="com.semonics.tworld.Accounts.ForgotPasswordActivity"></activity>
+        <activity android:name=".Accounts.ChangePasswordActivity" />
+        <activity android:name=".Accounts.OTPActivity" />
+        <activity android:name=".Accounts.ForgotPasswordActivity" />
         <activity
-            android:name="com.semonics.tworld.Accounts.SignUpActivity"
+            android:name=".Accounts.SignUpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/transparent_status"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name="com.semonics.tworld.SoundLists.VideoSound_A" />
+        <activity android:name=".SoundLists.VideoSound_A" />
         <activity
-            android:name="com.semonics.tworld.Video_Recording.GalleryVideos.GalleryVideos_A"
+            android:name=".Video_Recording.GalleryVideos.GalleryVideos_A"
             android:screenOrientation="portrait"
             android:theme="@style/white_status"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="com.semonics.tworld.Video_Recording.GallerySelectedVideo.GallerySelectedVideo_A"
+            android:name=".Video_Recording.GallerySelectedVideo.GallerySelectedVideo_A"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="com.semonics.tworld.Accounts.LoginActivity"
+            android:name=".Accounts.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/transparent_status"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="com.semonics.tworld.SplashActivity"
+            android:name=".SplashActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
@@ -70,14 +71,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.semonics.tworld.Main_Menu.MainMenuActivity"
+            android:name=".Main_Menu.MainMenuActivity"
             android:screenOrientation="portrait"
             android:theme="@style/transparent_status"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="com.semonics.tworld.WatchVideos.WatchVideos_F"
-            android:parentActivityName="com.semonics.tworld.Main_Menu.MainMenuActivity"
+            android:name=".WatchVideos.WatchVideos_F"
+            android:parentActivityName=".Main_Menu.MainMenuActivity"
             android:screenOrientation="portrait"
             android:theme="@style/transparent_status"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
@@ -138,26 +139,27 @@
         </activity>
         -->
         <activity
-            android:name="com.semonics.tworld.Video_Recording.Video_Recoder_A"
+            android:name=".Video_Recording.Video_Recoder_A"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="com.semonics.tworld.Video_Recording.Preview_Video_A"
+            android:name=".Video_Recording.Preview_Video_A"
             android:screenOrientation="portrait"
             android:theme="@style/black_status"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="com.semonics.tworld.Video_Recording.Post_Video_A"
+            android:name=".Video_Recording.Post_Video_A"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="com.semonics.tworld.SoundLists.SoundList_Main_A"
+            android:name=".SoundLists.SoundList_Main_A"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-
-        <meta-data
+        <!--
+ <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD1LEUfuKnF30HtUZ7H-b7_mFw4-qH1DBI" />
+        -->
         <!--
  <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -169,9 +171,16 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/redcolor" />
         -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_app_img" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/redcolor" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -180,7 +189,14 @@
         </provider>
 
         <service
-            android:name="com.semonics.tworld.Services.UploadVideoService"
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".Services.UploadVideoService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

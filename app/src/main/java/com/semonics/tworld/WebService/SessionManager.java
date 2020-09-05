@@ -31,6 +31,7 @@ public class SessionManager {     /*Shared Preferences*/
     public static final String PREF_LIKE_COUNT = "like_count";
     public static final String PREF_SEARCH_KEYWORD = "keyword";
     public static final String PREF_PRIVATE_ACC= "private_acc";
+    public static final String PREF_FCM_TOKEN= "fcm_token";
     public SessionManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);

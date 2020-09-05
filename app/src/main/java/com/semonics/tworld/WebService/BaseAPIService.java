@@ -11,7 +11,9 @@ import com.semonics.tworld.SimpleClasses.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -24,13 +26,19 @@ import static com.semonics.tworld.SimpleClasses.Utils.getDeviceId;
 import static com.semonics.tworld.SimpleClasses.Utils.methodToast;
 import static com.semonics.tworld.SimpleClasses.Utils.showLog;
 import static com.semonics.tworld.SimpleClasses.Utils.showProgressDialog;
+import static com.semonics.tworld.WebService.WSParams.SERVICE_ACCOUNT_SETTINGS;
+import static com.semonics.tworld.WebService.WSParams.SERVICE_ADD_DEVICE;
+import static com.semonics.tworld.WebService.WSParams.SERVICE_ADD_USER;
 import static com.semonics.tworld.WebService.WSParams.SERVICE_ALL_LIKED_VIDEO;
 import static com.semonics.tworld.WebService.WSParams.SERVICE_ALL_VIDEO;
+import static com.semonics.tworld.WebService.WSParams.SERVICE_AUTHENTICATE;
+import static com.semonics.tworld.WebService.WSParams.SERVICE_GET_ALL_COMMENT_LIST;
 import static com.semonics.tworld.WebService.WSParams.SERVICE_GET_DOC_FOR_YOU;
 import static com.semonics.tworld.WebService.WSParams.SERVICE_GET_MENTIONED_LIST;
 import static com.semonics.tworld.WebService.WSParams.SERVICE_SEARCH_ALL;
 import static com.semonics.tworld.WebService.WSParams.SERVICE_SEARCH_MUSIC;
 import static com.semonics.tworld.WebService.WSParams.SERVICE_SEARCH_VIDEO;
+import static com.semonics.tworld.WebService.WSParams.SERVICE_UPLOAD_PROFILE_PIC;
 import static com.semonics.tworld.WebService.WSParams.WS_KEY_BEARER;
 
 
@@ -68,7 +76,7 @@ public class BaseAPIService {
         }
     }
 
-    public BaseAPIService(final Context context, String module, MultipartBody.Part multipartBody, HashMap<String, RequestBody> requestBody, ResponseListener responseListener) {
+    public BaseAPIService(final Context context, String module, MultipartBody.Part file, ResponseListener responseListener, Map<String, RequestBody> map) {
         this.context = context;
         sessionManager = TWorld.getInstance().getSession();
         this.responseListener = responseListener;
@@ -77,7 +85,7 @@ public class BaseAPIService {
             if (isShowProgress) {
                 showProgressDialog(context);
             }
-            processMultiPartRequest(module, multipartBody, requestBody);
+            processMultiPartRequest(module, file, map);
         } else {
             responseListener.onFailure(context.getResources().getString(R.string.no_internet_connection));
         }
@@ -87,6 +95,7 @@ public class BaseAPIService {
 //        showLog(TAG_REQUEST, TAG_URL + serviceName);
         String token = "";
         token = WS_KEY_BEARER + sessionManager.getString(SessionManager.PREF_TOKEN);
+        String fcmToken = sessionManager.getString(SessionManager.PREF_FCM_TOKEN);
         showLog("token req", token);
         Call<ResponseBody> call = null;
         switch (apiMethodType) {
@@ -95,14 +104,21 @@ public class BaseAPIService {
                     showLog("token", token);
                     call = RetrofitBuilder.getWebService().doRequestPostWithHeader(token, module, requestBody);
                 } else {
-                    String deviceId = getDeviceId(context);
-                    call = RetrofitBuilder.getWebService().doRequestForAuthentication(module, requestBody,deviceId);
+                    if (module.contains(SERVICE_ADD_USER) || module.contains(SERVICE_AUTHENTICATE)) {
+
+                        call = RetrofitBuilder.getWebService().doRequestForAuthentication(module, requestBody, fcmToken);
+                    } else if (module.contains(SERVICE_ADD_DEVICE)) {
+                        call = RetrofitBuilder.getWebService().doRequestForAddDevice(module, requestBody, fcmToken, sessionManager.getString(SessionManager.PREF_USER_ID));
+                    } else {
+                        call = RetrofitBuilder.getWebService().doRequestPost(module, requestBody);
+                    }
+
                 }
                 break;
             case "GET":
-                if (module.equals(SERVICE_GET_DOC_FOR_YOU) || module.contains(SERVICE_ALL_VIDEO) || module.contains(SERVICE_ALL_LIKED_VIDEO)|| module.contains(SERVICE_GET_MENTIONED_LIST)) {
+                if (module.equals(SERVICE_GET_DOC_FOR_YOU) || module.contains(SERVICE_ALL_VIDEO) || module.contains(SERVICE_ALL_LIKED_VIDEO) || module.contains(SERVICE_GET_MENTIONED_LIST) || module.contains(SERVICE_GET_ALL_COMMENT_LIST)) {
                     call = RetrofitBuilder.getWebService().doRequestGetWithPagination(token, module, 0, 10);
-                } else if (module.contains(SERVICE_SEARCH_VIDEO) || module.contains(SERVICE_SEARCH_ALL)||module.contains(SERVICE_SEARCH_MUSIC)) {
+                } else if (module.contains(SERVICE_SEARCH_VIDEO) || module.contains(SERVICE_SEARCH_ALL) || module.contains(SERVICE_SEARCH_MUSIC)) {
                     String keyword = sessionManager.getString(SessionManager.PREF_SEARCH_KEYWORD);
                     call = RetrofitBuilder.getWebService().doRequestGetForSearchWithPagination(token, module, keyword, 0, 10);
                 } else {
@@ -150,12 +166,17 @@ public class BaseAPIService {
     }
 
 
-    private void processMultiPartRequest(final String module, MultipartBody.Part multipartBody, HashMap<String, RequestBody> requestBody) {
+    private void processMultiPartRequest(final String module, MultipartBody.Part file, Map<String, RequestBody> map) {
         String token = "";
         Call<ResponseBody> call = null;
         token = WS_KEY_BEARER + sessionManager.getString(SessionManager.PREF_TOKEN);
         showLog("token", token);
-        call = RetrofitBuilder.getWebService().postVideoThumbnail(token, module, requestBody, multipartBody);
+        if (module.contains(SERVICE_UPLOAD_PROFILE_PIC)) {
+            call = RetrofitBuilder.getWebService().uploadProfile(token, module, file);
+        } else {
+            call = RetrofitBuilder.getWebService().postVideoThumbnail(token, module, file,
+                    map.get("location"), map.get("hashtag"), map.get("caption"), map.get("people"), map.get("musicId"));
+        }
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -183,7 +204,6 @@ public class BaseAPIService {
                     }
                 } catch (Exception e) {
                     showLog(TAG_EXCEPTION, e.toString());
-                    ;
                 }
             }
 

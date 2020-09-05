@@ -165,7 +165,7 @@ class Sound_Items_Adapter extends RecyclerView.Adapter<Sound_Items_Adapter.Custo
                 item.thum = "Null";
             }
             Picasso.with(context).load(item.thum)
-                    .placeholder(context.getResources().getDrawable(R.drawable.image_placeholder))
+                    .placeholder(context.getResources().getDrawable(R.drawable.ic_gallary))
                     .into(holder.sound_image);
 
 

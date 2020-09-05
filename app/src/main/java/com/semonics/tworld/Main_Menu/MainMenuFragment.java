@@ -36,7 +36,7 @@ import com.semonics.tworld.SimpleClasses.Variables;
 import com.semonics.tworld.Video_Recording.Video_Recoder_A;
 
 
-public class MainMenuFragment extends RootFragment implements View.OnClickListener {
+public class MainMenuFragment extends RootFragment {
 
     public static TabLayout tabLayout;
 
@@ -82,7 +82,7 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
                 }
 
                 if (position == 3 && notificationFragment != null) {
-                    notificationFragment.apiCall();
+                    notificationFragment.apiCallForAllUnseenNoti();
                 }
                 if (position == 4 && profileFragment != null) {
                     profileFragment.apiCall();
@@ -94,19 +94,13 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
 
             }
         });
+
         pager.setPagingEnabled(false);
-        view.setOnClickListener(this);
         return view;
     }
 
 
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        switch (id) {
-        }
 
-    }
 
 
     @Override
@@ -157,7 +151,7 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
 
         View view4 = LayoutInflater.from(context).inflate(R.layout.item_tablayout, null);
         ImageView imageView4 = view4.findViewById(R.id.image);
-        imageView4.setImageDrawable(getResources().getDrawable(R.drawable.ic_notification_gray));
+        imageView4.setImageDrawable(getResources().getDrawable(R.drawable.ic_notification));
         imageView4.setColorFilter(ContextCompat.getColor(context, R.color.colorwhite_50), android.graphics.PorterDuff.Mode.SRC_IN);
         tabLayout.getTabAt(3).setCustomView(view4);
 
@@ -211,7 +205,7 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
                         image.setImageDrawable(getResources().getDrawable(R.drawable.ic_discovery_gray));
                         break;
                     case 3:
-                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_notification_gray));
+                        image.setImageDrawable(getResources().getDrawable(R.drawable.ic_notification));
                         break;
                     case 4:
                         image.setImageDrawable(getResources().getDrawable(R.drawable.ic_profile_gray));

@@ -236,7 +236,7 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
                         break;
 
                     case R.id.shared_layout:
-                        final VideoAction_F fragment = new VideoAction_F(item.id, new Fragment_Callback() {
+                        final VideoAction_F fragment = new VideoAction_F(item.docName, new Fragment_Callback() {
                             @Override
                             public void Responce(Bundle bundle) {
 
@@ -252,7 +252,7 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
 
                     case R.id.sound_image_layout:
                         if (check_permissions()) {
-                            Intent intent = new Intent(getActivity(),VideoSound_A.class);
+                            Intent intent = new Intent(getActivity(), VideoSound_A.class);
                             intent.putExtra("data", item);
                             startActivity(intent);
                         }
@@ -296,9 +296,8 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
                         userDetails.profilePic = user_info.optString("profilePic");
                         item.userDetails = userDetails;
 
-
                         JSONObject sound_data = itemdata.optJSONObject("music");
-                        if(sound_data!=null){
+                        if (sound_data != null) {
                             Music musicModel = new Music();
                             musicModel.id = sound_data.optString("_id");
                             musicModel.musicName = sound_data.optString("musicName");
@@ -311,7 +310,7 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
                         JSONArray hashTagArray = itemdata.getJSONArray("hashTag");
                         String[] hashtags = new String[hashTagArray.length()];
                         for (int a = 0; a < hashTagArray.length(); a++) {
-                            hashtags[a]= hashTagArray.getString(a);
+                            hashtags[a] = hashTagArray.getString(a);
                         }
                         List<String> hashtagList = Arrays.asList(hashtags);
                         item.hashTag = hashtagList;
@@ -703,11 +702,12 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
         if (action.equals("1")) {
             action = "0";
             home_model.likeCount = home_model.likeCount - 1;
+            home_model.like = 0;
         } else {
             action = "1";
             home_model.likeCount = home_model.likeCount + 1;
+            home_model.like = 1;
         }
-
 
         data_list.remove(position);
         home_model.like = Integer.valueOf(action);
@@ -717,9 +717,9 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
         apiCallForLikeVideo(data_list.get(position).id);
     }
 
-    private void apiCallForLikeVideo(String docId){
+    private void apiCallForLikeVideo(String docId) {
         try {
-            new BaseAPIService(getContext(), SERVICE_LIKE_VIDEO+docId, RequestParams.likeVideo(), true, responseListenerForLikeVideo, METHOD_POST, false);
+            new BaseAPIService(getContext(), SERVICE_LIKE_VIDEO + docId, RequestParams.likeVideo(), true, responseListenerForLikeVideo, METHOD_POST, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -731,7 +731,8 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
             try {
                 JSONObject jsonObject = new JSONObject(res);
                 JSONObject object = jsonObject.getJSONObject(WS_KEY_OBJ);
-                sessionManager.putString(SessionManager.PREF_LIKE_COUNT,object.getString("likeCount"));
+                sessionManager.putInt(SessionManager.PREF_LIKE_COUNT, object.getInt("likeCount"));
+//                adapter.notifyDataSetChanged();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -742,6 +743,7 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
             Utils.methodToast(context, error);
         }
     };
+
     private void muteVideo() {
         isMute = !isMute;
         if (isMute) {
@@ -854,7 +856,7 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
 
         Functions.Show_determinent_loader(context, false, false);
         PRDownloader.initialize(getActivity().getApplicationContext());
-        DownloadRequest prDownloader = PRDownloader.download(item.docName, Environment.getExternalStorageDirectory() + "/Tittic/", item.id + "no_watermark" + ".mp4")
+        DownloadRequest prDownloader = PRDownloader.download(item.docName, Environment.getExternalStorageDirectory() + "/TWorld/", item.id + "no_watermark" + ".mp4")
                 .build()
                 .setOnStartOrResumeListener(new OnStartOrResumeListener() {
                     @Override
@@ -888,7 +890,7 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
         prDownloader.start(new OnDownloadListener() {
             @Override
             public void onDownloadComplete() {
-                Applywatermark(item);
+                ApplyWatermark(item);
             }
 
             @Override
@@ -904,13 +906,13 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
 
     }
 
-    public void Applywatermark(final HomeModel item) {
+    public void ApplyWatermark(final HomeModel item) {
 
-        Bitmap myLogo = ((BitmapDrawable) getResources().getDrawable(R.drawable.ic_watermark_image)).getBitmap();
-        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 50, 50, false);
+        Bitmap myLogo = ((BitmapDrawable) getResources().getDrawable(R.drawable.app_icon_water_mark)).getBitmap();
+        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 40, 40, false);
         GlWatermarkFilter filter = new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.LEFT_TOP);
-        new GPUMp4Composer(Environment.getExternalStorageDirectory() + "/Tittic/" + item.id + "no_watermark" + ".mp4",
-                Environment.getExternalStorageDirectory() + "/Tittic/" + item.id + ".mp4")
+        new GPUMp4Composer(Environment.getExternalStorageDirectory() + "/TWorld/" + item.id + "no_watermark" + ".mp4",
+                Environment.getExternalStorageDirectory() + "/TWorld/" + item.id + ".mp4")
                 .fillMode(FillMode.PRESERVE_ASPECT_FIT)
                 .filter(filter)
                 .mute(isMute)
@@ -919,27 +921,20 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
                 .listener(new GPUMp4Composer.Listener() {
                     @Override
                     public void onProgress(double progress) {
-
                         Log.d("resp", "" + (int) (progress * 100));
                         Functions.Show_loading_progress((int) ((progress * 100) / 2) + 50);
-
                     }
 
                     @Override
                     public void onCompleted() {
-
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 Functions.cancel_determinent_loader();
                                 Delete_file_no_watermark(item);
                                 Scan_file(item);
-
                             }
                         });
-
-
                     }
 
                     @Override
@@ -956,7 +951,6 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
                             @Override
                             public void run() {
                                 try {
-
                                     Delete_file_no_watermark(item);
                                     Functions.cancel_determinent_loader();
                                     Toast.makeText(context, "Try Again", Toast.LENGTH_SHORT).show();
@@ -974,7 +968,7 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
 
 
     public void Delete_file_no_watermark(HomeModel item) {
-        File file = new File(Environment.getExternalStorageDirectory() + "/Tittic/" + item.id + "no_watermark" + ".mp4");
+        File file = new File(Environment.getExternalStorageDirectory() + "/TWorld/" + item.id + "no_watermark" + ".mp4");
         if (file.exists()) {
             file.delete();
         }
@@ -982,7 +976,7 @@ public class HomeFragment extends RootFragment implements Player.EventListener, 
 
     public void Scan_file(HomeModel item) {
         MediaScannerConnection.scanFile(getActivity(),
-                new String[]{Environment.getExternalStorageDirectory() + "/Tittic/" + item.id + ".mp4"},
+                new String[]{Environment.getExternalStorageDirectory() + "/TWorld/" + item.id + ".mp4"},
                 null,
                 new MediaScannerConnection.OnScanCompletedListener() {
 

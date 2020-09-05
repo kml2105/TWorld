@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -89,32 +90,40 @@ public class UploadVideoService extends IntentService {
     }
 
 
-
-
-
-
     private void postVideoUrl() {
         try {
             dataFile = new File(videoFile);
             fileName = dataFile.getName();
-            RequestBody requestFile = RequestBody.create(MediaType.parse("*/*"), dataFile);
-            MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("file", fileName, requestFile);
-            RequestBody file = RequestBody.create(MediaType.parse("text/form-data"),dataFile);
-            RequestBody desBody = RequestBody.create(MediaType.parse("text/plain"),description);
-            RequestBody tagBody = RequestBody.create(MediaType.parse("text/plain"),description);
-            RequestBody locationBody = RequestBody.create(MediaType.parse("text/plain"),"ahmedabad");
-            RequestBody tagPeopleBody = RequestBody.create(MediaType.parse("text/plain"),"");
-            RequestBody musicIdBody = RequestBody.create(MediaType.parse("text/plain"),"5");
 
-
-            HashMap<String, RequestBody> map = new HashMap<>();
-            map.put("file", file);
-            map.put("caption", desBody);
-            map.put("hashTag", tagBody);
-            map.put("location",locationBody);
-            map.put("tagPeople",tagPeopleBody);
-            map.put("musicId",musicIdBody);
-            new BaseAPIService(this, SERVICE_UPLOAD_DOC, fileToUpload, map, responseListener);
+            Map<String,RequestBody> map = new HashMap<String, RequestBody>() {};
+            RequestBody descriptionReq = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    description);
+            RequestBody locationReq = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    description);
+            RequestBody captionReq = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    description);
+            RequestBody hashTagReq = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    description);
+            RequestBody peopleReq = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    description);
+            RequestBody musicIdReq = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    description);
+            map.put("location",locationReq);
+            map.put("hashtag",hashTagReq);
+            map.put("caption",descriptionReq);
+            map.put("people",peopleReq);
+            map.put("musicId",musicIdReq);
+            RequestBody fileReqBody = RequestBody.create(MediaType.parse("video/*"), dataFile);
+            // Create MultipartBody.Part using file request-body,file name and part name
+            MultipartBody.Part part = MultipartBody.Part.createFormData("file", dataFile.getName(), fileReqBody);
+//            Utility.printRequestLog(videoJson.toString());
+            new BaseAPIService(this, SERVICE_UPLOAD_DOC,part,responseListener,map);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,8 +148,6 @@ public class UploadVideoService extends IntentService {
 
         @Override
         public void onFailure(String error) {
-
-
             Utils.methodToast(getApplicationContext(), error);
         }
     };

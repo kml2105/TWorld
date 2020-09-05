@@ -65,7 +65,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     GoogleSignInClient mGoogleSignInClient;
     //a constant for detecting the login intent result
     private static final int RC_SIGN_IN = 234;
-    private String deviceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +80,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnLogin.setOnClickListener(this);
         tvForgotPw.setOnClickListener(this);
         mAuth = FirebaseAuth.getInstance();
-        deviceId = getDeviceId(this);
-        showLog("id:", deviceId);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()

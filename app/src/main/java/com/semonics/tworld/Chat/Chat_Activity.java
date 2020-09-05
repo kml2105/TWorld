@@ -135,7 +135,7 @@ public class Chat_Activity extends Fragment {
     IOSDialog lodding_view;
     View view;
     LinearLayout gif_layout;
-    ImageButton upload_gif_btn;
+   // ImageButton upload_gif_btn;
     ImageView sendbtn;
     ImageButton alert_btn;
 
@@ -349,7 +349,7 @@ public class Chat_Activity extends Fragment {
         });
 
 
-        upload_gif_btn= view.findViewById(R.id.upload_gif_btn);
+        /*upload_gif_btn= view.findViewById(R.id.upload_gif_btn);
         upload_gif_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -360,7 +360,7 @@ public class Chat_Activity extends Fragment {
                 GetGipy();
                 }
             }
-        });
+        });*/
 
 
 
@@ -1713,7 +1713,7 @@ public class Chat_Activity extends Fragment {
     // slide the view from below itself to the current position
     public void slideUp(){
         message.setHint("Search Gifs");
-        upload_gif_btn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_gif_image));
+        //upload_gif_btn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_gif_image));
         gif_layout.setVisibility(View.VISIBLE);
         sendbtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_search));
         TranslateAnimation animate = new TranslateAnimation(
@@ -1731,7 +1731,7 @@ public class Chat_Activity extends Fragment {
     public void slideDown(){
         message.setHint("Type your message here...");
         message.setText("");
-        upload_gif_btn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_gif_image_gray));
+        //upload_gif_btn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_gif_image_gray));
         sendbtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_send));
         TranslateAnimation animate = new TranslateAnimation(
                 0,                 // fromXDelta

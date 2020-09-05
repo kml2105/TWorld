@@ -9,7 +9,9 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.semonics.tworld.R;
+import com.semonics.tworld.SimpleClasses.Utils;
 import com.semonics.tworld.SimpleClasses.Variables;
 
 
@@ -36,17 +38,11 @@ public class MainMenuActivity extends AppCompatActivity {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        Variables.screen_height= displayMetrics.heightPixels;
-        Variables.screen_width= displayMetrics.widthPixels;
-
-        Variables.sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
 
       //  Variables.user_id=Variables.sharedPreferences.getString(Variables.u_id,"");
        // Variables.user_name=Variables.sharedPreferences.getString(Variables.u_name,"");
        // Variables.user_pic=Variables.sharedPreferences.getString(Variables.u_pic,"");
 
-
-      //  token= FirebaseInstanceId.getInstance().getToken();
       /*  if(token==null || (token.equals("")||token.equals("null")))
             token=Variables.sharedPreferences.getString(Variables.device_token,"null");*/
 

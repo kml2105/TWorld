@@ -1048,7 +1048,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
         Functions.Show_determinent_loader(context,false,false);
         PRDownloader.initialize(getApplicationContext());
-        DownloadRequest prDownloader= PRDownloader.download(item.docName, Environment.getExternalStorageDirectory() +"/Tittic/", item.id+"no_watermark"+".mp4")
+        DownloadRequest prDownloader= PRDownloader.download(item.docName, Environment.getExternalStorageDirectory() +"/TWorld/", item.id+"no_watermark"+".mp4")
                 .build()
                 .setOnStartOrResumeListener(new OnStartOrResumeListener() {
                     @Override
@@ -1102,11 +1102,11 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
     public void Applywatermark(final HomeModel item){
 
-        Bitmap myLogo = ((BitmapDrawable)getResources().getDrawable(R.drawable.ic_watermark_image)).getBitmap();
+        Bitmap myLogo = ((BitmapDrawable)getResources().getDrawable(R.drawable.app_icon_water_mark)).getBitmap();
         Bitmap bitmap_resize=Bitmap.createScaledBitmap(myLogo, 50, 50, false);
         GlWatermarkFilter filter=new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.LEFT_TOP);
-        new GPUMp4Composer(Environment.getExternalStorageDirectory() +"/Tittic/"+item.id+"no_watermark"+".mp4",
-                Environment.getExternalStorageDirectory() +"/Tittic/"+item.id+".mp4")
+        new GPUMp4Composer(Environment.getExternalStorageDirectory() +"/TWorld/"+item.id+"no_watermark"+".mp4",
+                Environment.getExternalStorageDirectory() +"/TWorld/"+item.id+".mp4")
                 .filter(filter)
 
                 .listener(new GPUMp4Composer.Listener() {
@@ -1167,7 +1167,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
 
     public void Delete_file_no_watermark(HomeModel item){
-        File file=new File(Environment.getExternalStorageDirectory() +"/Tittic/"+item.id+"no_watermark"+".mp4");
+        File file=new File(Environment.getExternalStorageDirectory() +"/TWorld/"+item.id+"no_watermark"+".mp4");
         if(file.exists()){
             file.delete();
         }
@@ -1175,7 +1175,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
     public void Scan_file(HomeModel item){
         MediaScannerConnection.scanFile(WatchVideos_F.this,
-                new String[] { Environment.getExternalStorageDirectory() +"/Tittic/"+item.id+".mp4" },
+                new String[] { Environment.getExternalStorageDirectory() +"/TWorld/"+item.id+".mp4" },
                 null,
                 new MediaScannerConnection.OnScanCompletedListener() {
 

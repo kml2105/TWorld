@@ -44,7 +44,7 @@ public class VideoAction_F extends BottomSheetDialogFragment implements View.OnC
 
     Fragment_Callback fragment_callback;
 
-    String video_id;
+    String videoUrl;
 
     ProgressBar progressBar;
 
@@ -52,8 +52,8 @@ public class VideoAction_F extends BottomSheetDialogFragment implements View.OnC
     }
 
     @SuppressLint("ValidFragment")
-    public VideoAction_F(String id, Fragment_Callback fragment_callback) {
-        video_id=id;
+    public VideoAction_F(String docName, Fragment_Callback fragment_callback) {
+        videoUrl=docName;
         this.fragment_callback=fragment_callback;
     }
 
@@ -156,7 +156,7 @@ public class VideoAction_F extends BottomSheetDialogFragment implements View.OnC
 
             Intent intent = new Intent(android.content.Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, BASE_URL+"view.php?id="+video_id);
+            intent.putExtra(Intent.EXTRA_TEXT, videoUrl);
             intent.setComponent(name);
             startActivity(intent);
         }catch (Exception e){
@@ -181,7 +181,7 @@ public class VideoAction_F extends BottomSheetDialogFragment implements View.OnC
 
             case R.id.copy_layout:
                 ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Copied Text", "http://bringthings.com/API/tictic/view.php?id="+video_id);
+                ClipData clip = ClipData.newPlainText("Copied Text", videoUrl);
                 clipboard.setPrimaryClip(clip);
 
                 Toast.makeText(context, "Link Copy in clipboard", Toast.LENGTH_SHORT).show();

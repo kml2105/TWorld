@@ -78,7 +78,7 @@ public interface OnItemClickListener {
 
         Glide.with(context)
                 .load(Variables.gif_firstpart+gif_list.get(i)+Variables.gif_secondpart)
-                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE).placeholder(context.getResources().getDrawable(R.drawable.image_placeholder)).centerCrop())
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE).placeholder(context.getResources().getDrawable(R.drawable.ic_gallary)).centerCrop())
                  .into(holder.gif_image);
 
         Log.d("resp",Variables.gif_firstpart+gif_list.get(i)+Variables.gif_secondpart);

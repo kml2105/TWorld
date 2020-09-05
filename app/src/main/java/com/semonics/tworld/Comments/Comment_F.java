@@ -20,7 +20,9 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.semonics.tworld.Home.HomeModel;
 import com.semonics.tworld.Main_Menu.RelateToFragment_OnBack.RootFragment;
+import com.semonics.tworld.Model.UserDetails;
 import com.semonics.tworld.R;
 import com.semonics.tworld.SimpleClasses.API_CallBack;
 import com.semonics.tworld.SimpleClasses.Fragment_Data_Send;
@@ -28,8 +30,10 @@ import com.semonics.tworld.SimpleClasses.Functions;
 import com.semonics.tworld.SimpleClasses.Utils;
 import com.semonics.tworld.SimpleClasses.Variables;
 import com.semonics.tworld.WebService.BaseAPIService;
+import com.semonics.tworld.WebService.RequestParams;
 import com.semonics.tworld.WebService.ResponseListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,8 +41,11 @@ import java.util.ArrayList;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.semonics.tworld.WebService.WSParams.METHOD_GET;
+import static com.semonics.tworld.WebService.WSParams.METHOD_POST;
 import static com.semonics.tworld.WebService.WSParams.SERVICE_GET_ALL_COMMENT_LIST;
+import static com.semonics.tworld.WebService.WSParams.SERVICE_SEND_COMMENT;
 import static com.semonics.tworld.WebService.WSParams.WS_KEY_CODE;
+import static com.semonics.tworld.WebService.WSParams.WS_KEY_OBJ;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -143,24 +150,14 @@ public class Comment_F extends RootFragment {
             public void onClick(View v) {
 
                 String message = message_edit.getText().toString();
-                if (!TextUtils.isEmpty(message)) {
-                    //if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)){
-                    Send_Comments(video_id, message);
-                    message_edit.setText(null);
-                    send_progress.setVisibility(View.VISIBLE);
-                    send_btn.setVisibility(View.GONE);
-                   /* }
-                    else {
-                        Toast.makeText(context, "Please Login into the app", Toast.LENGTH_SHORT).show();
-                    }*/
+                if (!message.trim().isEmpty()) {
+                    apiCallForSendComment();
                 }
 
             }
         });
 
-
-        Get_All_Comments();
-
+        apiCall();
 
         return view;
     }
@@ -169,41 +166,14 @@ public class Comment_F extends RootFragment {
     @Override
     public void onDetach() {
         Functions.hideSoftKeyboard(getActivity());
-
         super.onDetach();
     }
 
     // this funtion will get all the comments against post
-    public void Get_All_Comments() {
-
-        Functions.Call_Api_For_get_Comment(getActivity(), video_id, new API_CallBack() {
-            @Override
-            public void ArrayData(ArrayList arrayList) {
-                ArrayList<Comment_Get_Set> arrayList1 = arrayList;
-                for (Comment_Get_Set item : arrayList1) {
-                    data_list.add(item);
-                }
-                comment_count_txt.setText(data_list.size() + " comments");
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void OnSuccess(String responce) {
-
-            }
-
-            @Override
-            public void OnFail(String responce) {
-
-            }
-
-        });
-
-    }
-
     public void apiCall() {
         try {
-            new BaseAPIService(getApplicationContext(), SERVICE_GET_ALL_COMMENT_LIST, null, true, responseListener, METHOD_GET, true);
+            message_edit.setText(null);
+            new BaseAPIService(getApplicationContext(), SERVICE_GET_ALL_COMMENT_LIST + video_id, null, true, responseListener, METHOD_GET, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -213,13 +183,26 @@ public class Comment_F extends RootFragment {
         @Override
         public void onSuccess(String res) {
             try {
+                data_list.clear();
 
                 JSONObject jsonObject = new JSONObject(res);
                 int code = jsonObject.getInt(WS_KEY_CODE);
+                JSONObject object = jsonObject.getJSONObject(WS_KEY_OBJ);
                 if (code == 200) {
-                    ArrayList<Comment_Get_Set> arrayList1 = new ArrayList<>();
-                    for (Comment_Get_Set item : arrayList1) {
-                        data_list.add(item);
+                    JSONArray commentArray = object.getJSONArray("comment");
+                    for(int i =0;i<commentArray.length();i++){
+                        JSONObject commentObject = commentArray.optJSONObject(i);
+                        Comment_Get_Set comment_get_set = new Comment_Get_Set();
+                        comment_get_set.comment = commentObject.optString("comment");
+                        JSONObject user_info = commentObject.optJSONObject("userDetails");
+                        if (user_info != null) {
+                            UserDetails userDetails = new UserDetails();
+                            userDetails.firstName = user_info.optString("firstName");
+                            userDetails.lastName = user_info.optString("lastName");
+                            userDetails.profilePic = user_info.optString("profilePic");
+                            comment_get_set.userDetails = userDetails;
+                        }
+                        data_list.add(comment_get_set);
                     }
                     comment_count_txt.setText(data_list.size() + " comments");
                     adapter.notifyDataSetChanged();
@@ -237,6 +220,53 @@ public class Comment_F extends RootFragment {
         }
     };
 
+    private void apiCallForSendComment() {
+        try {
+            send_progress.setVisibility(View.VISIBLE);
+            send_btn.setVisibility(View.GONE);
+            new BaseAPIService(getApplicationContext(), SERVICE_SEND_COMMENT + video_id, RequestParams.addComment(message_edit.getText().toString()), true, responseListenerForSendComment, METHOD_POST, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    ResponseListener responseListenerForSendComment = new ResponseListener() {
+        @Override
+        public void onSuccess(String res) {
+            try {
+
+                JSONObject jsonObject = new JSONObject(res);
+                int code = jsonObject.getInt(WS_KEY_CODE);
+                if (code == 200) {
+                    send_progress.setVisibility(View.GONE);
+                    send_btn.setVisibility(View.VISIBLE);
+                    apiCall();
+                   /* ArrayList<Comment_Get_Set> arrayList1 = data_list;
+                    for (Comment_Get_Set item : arrayList1) {
+                        Comment_Get_Set item1 = new Comment_Get_Set();
+                        item1.comment = message_edit.getText().toString();
+                        data_list.add(0, item1);
+                        comment_count++;
+                        comment_count_txt.setText(comment_count + " comments");
+                        if (fragment_data_send != null)
+                            fragment_data_send.onDataSent("" + comment_count);
+                    }
+                    adapter.notifyDataSetChanged();
+                    send_progress.setVisibility(View.GONE);
+                    send_btn.setVisibility(View.VISIBLE);*/
+                } else {
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(String error) {
+            Utils.methodToast(getContext(), error);
+        }
+    };
 
     // this function will call an api to upload your comment
     public void Send_Comments(String video_id, final String comment) {

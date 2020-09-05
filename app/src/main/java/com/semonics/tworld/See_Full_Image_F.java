@@ -71,7 +71,7 @@ public class See_Full_Image_F extends Fragment {
 
 
             p_bar.setVisibility(View.VISIBLE);
-            Picasso.with(context).load(image_url).placeholder(R.drawable.image_placeholder)
+            Picasso.with(context).load(image_url).placeholder(R.drawable.ic_gallary)
                     .into(single_image, new Callback() {
                         @Override
                         public void onSuccess() {

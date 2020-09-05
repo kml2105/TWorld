@@ -1,6 +1,6 @@
 package com.semonics.tworld.WebService;
 
-
+import java.io.File;
 import java.util.Map;
 
 import okhttp3.MultipartBody;
@@ -27,8 +27,13 @@ public interface APIInterface {
     @Headers({"Content-Type:application/json", "Accept:application/json"})
     @POST("/{module}")
     Call<ResponseBody> doRequestPost(@Path(value = "module", encoded = true) String module, @Body RequestBody requestBody);
+
     @POST("/{module}")
     Call<ResponseBody> doRequestForAuthentication(@Path(value = "module", encoded = true) String module, @Body RequestBody requestBody, @Query("deviceId") String deviceId);
+
+    @POST("/{module}")
+    Call<ResponseBody> doRequestForAddDevice(@Path(value = "module", encoded = true) String module, @Body RequestBody requestBody, @Query("deviceId") String deviceId,@Query("userId") String userId);
+
     @Headers({"Content-Type:application/json", "Accept:application/json"})
     @POST("/{module}")
     Call<ResponseBody> doRequestPostWithHeader(@Header("Authorization") String token, @Path(value = "module", encoded = true) String module, @Body RequestBody requestBody);
@@ -60,17 +65,25 @@ public interface APIInterface {
     );
 
     @Multipart
+    @Headers({"Content-Type:application/x-www-form-urlencoded", "Accept:application/json"})
     @POST("/{module}")
-    Call<ResponseBody> uploadFile(
-            @Header("token") String token,
-            @Part RequestBody requestBody, @Path("path") String module
-            /*@Part MultipartBody.Part file*/);
+    Call<ResponseBody> uploadProfile(
+            @Header("Authorization") String token,
+            @Path(value = "module", encoded = true) String module,
+            @Part MultipartBody.Part file);
 
-    @Headers({"Content-Type:application/json", "Accept:application/json"})
+    @Headers({"Content-Type:application/x-www-form-urlencoded", "Accept:application/json"})
     @Multipart
     @POST("/{module}")
-    Call<ResponseBody> postVideoThumbnail(@Header("Authorization") String token, @Path(value = "module", encoded = true) String module, @PartMap() Map<String, RequestBody> partMap
-            , @Part MultipartBody.Part video_thumbnail);
+    Call<ResponseBody> postVideoThumbnail(@Header("Authorization") String token,
+                                          @Path(value = "module", encoded = true) String module,
+                                          @Part MultipartBody.Part file,
+                                          @Part("location") RequestBody location,
+                                          @Part("hashTag") RequestBody hashtag,
+                                          @Part("caption") RequestBody caption,
+                                          @Part("tagPeople") RequestBody people,
+                                          @Part("musicId") RequestBody musicId);
+
 
 //    @POST("/login")
 //    Call<ResponseBody> doLogin(@Body RequestBody requestBody);

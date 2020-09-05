@@ -86,7 +86,7 @@
                     android:layout_height="120dp"
                     android:id="@+id/img_no_job"
                     android:layout_centerInParent="true"
-                    android:src="@drawable/ic_whoops"
+                    android:src="@drawable/ic_no_data"
                     />
 
                 <TextView

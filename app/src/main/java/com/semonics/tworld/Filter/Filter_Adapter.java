@@ -75,8 +75,8 @@ public class Filter_Adapter extends RecyclerView.Adapter<Filter_Adapter.CustomVi
         this.context = context;
         datalist = arrayList;
         this.listener = listener;
-         image = BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.ic_bg_filter);
+/*         image = BitmapFactory.decodeResource(context.getResources(),
+                R.drawable.);*/
     }
 
     @Override

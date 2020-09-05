@@ -70,6 +70,7 @@ public class MentionVideoFragment extends Fragment {
                 JSONObject jsonObject = new JSONObject(res);
                 JSONArray jsonArray = jsonObject.getJSONArray(WS_KEY_OBJ);
                 if (jsonArray.length() >= 1) {
+                    no_data_layout.setVisibility(View.GONE);
                     myvideo_count = jsonArray.length();
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject itemdata = jsonArray.optJSONObject(i);
@@ -128,7 +129,7 @@ public class MentionVideoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_user_video, container, false);
+        view = inflater.inflate(R.layout.fragment_mention_video, container, false);
 
         context = getContext();
 

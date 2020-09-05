@@ -148,12 +148,14 @@ public class SearchFragment extends RootFragment {
             }
         });
         swiperefresh.setColorSchemeResources(R.color.black);
+        search_edit.setText("");
         swiperefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                searchApi();
+                //searchApi();
             }
         });
+        //searchApi();
         return view;
     }
 
@@ -309,8 +311,8 @@ public class SearchFragment extends RootFragment {
                             //    searchModelet.p = object.getString("profilePic");
                             searchModel.status = object.getInt("status");
                             userList.add(searchModel);
+                            searchUserAdapter.notifyItemInserted(i);
                         }
-                        searchUserAdapter.notifyDataSetChanged();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

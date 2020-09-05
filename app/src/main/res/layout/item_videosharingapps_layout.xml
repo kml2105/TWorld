@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:scaleType="centerCrop"
         android:layout_margin="15dp"
-        android:src="@drawable/image_placeholder"
+        android:src="@drawable/ic_gallary"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

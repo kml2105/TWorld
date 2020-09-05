@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -47,12 +50,14 @@ import com.semonics.tworld.Profile.Mentioned_Videos.MentionVideoFragment;
 import com.semonics.tworld.Profile.UserVideos.UserVideo_F;
 import com.semonics.tworld.R;
 import com.semonics.tworld.See_Full_Image_F;
+import com.semonics.tworld.Services.UploadVideoService;
 import com.semonics.tworld.Settings.SettingFragment;
 import com.semonics.tworld.SimpleClasses.Fragment_Callback;
 import com.semonics.tworld.SimpleClasses.Functions;
 import com.semonics.tworld.SimpleClasses.Utils;
 import com.semonics.tworld.SimpleClasses.Variables;
 import com.semonics.tworld.WebService.BaseAPIService;
+import com.semonics.tworld.WebService.RequestParams;
 import com.semonics.tworld.WebService.ResponseListener;
 import com.semonics.tworld.WebService.SessionManager;
 import com.semonics.tworld.WebService.TWorld;
@@ -62,14 +67,31 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static android.app.Activity.RESULT_OK;
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.semonics.tworld.WebService.WSParams.METHOD_GET;
+import static com.semonics.tworld.WebService.WSParams.METHOD_POST;
 import static com.semonics.tworld.WebService.WSParams.SERVICE_GET_USER;
+import static com.semonics.tworld.WebService.WSParams.SERVICE_UPLOAD_DOC;
+import static com.semonics.tworld.WebService.WSParams.SERVICE_UPLOAD_PROFILE_PIC;
 import static com.semonics.tworld.WebService.WSParams.WS_KEY_OBJ;
 
 /**
@@ -99,7 +121,8 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
     LinearLayout top_layout;
 
-
+    String picturePath;
+    File profileFile;
     public static String pic_url;
 
     public static final int TAKE_PIC_REQUEST_CODE = 0;
@@ -187,9 +210,9 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //upload image
-                Intent choosePictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                choosePictureIntent.setType("image/*");
-                startActivityForResult(choosePictureIntent, CHOOSE_PIC_REQUEST_CODE);
+                Intent i = new Intent(
+                        Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, CHOOSE_PIC_REQUEST_CODE);
             }
         });
 
@@ -199,6 +222,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
                 //take photo
                 Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+
                 if (mMediaUri == null) {
                     Toast.makeText(getApplicationContext(), "Sorry there was an error! Try again.", Toast.LENGTH_LONG).show();
                 } else {
@@ -213,15 +237,66 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CHOOSE_PIC_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(photo);
-        } else if (requestCode == TAKE_PIC_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == CHOOSE_PIC_REQUEST_CODE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+
+            picturePath =selectedImage.getPath();
+            if(picturePath!=null){
+                File f = new File(getRealPathFromURI(selectedImage));
+                profileFile = new File(f, "filename");
+                try {
+                    f.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Picasso.with(context)
+                    .load(picturePath)
+                    .resize(200, 200).centerCrop().into(imageView);
+            // String picturePath contains the path of selected Image
+        } else if (requestCode == TAKE_PIC_REQUEST_CODE && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get(MediaStore.EXTRA_OUTPUT);
-            imageView.setImageBitmap(photo);
+            Uri uri = getImageUri(getApplicationContext(), photo);
+            File f = new File(getRealPathFromURI(uri));
+            profileFile = new File(f, "filename");
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            picturePath =uri.getPath();
+
+            Picasso.with(context)
+                    .load(uri)
+                    .placeholder(context.getResources().getDrawable(R.drawable.user_profile))
+                    .resize(200, 200).centerCrop().into(imageView);
         }
+        apiCallForUploadImg(profileFile);
+
     }
 
+    private void SaveImage(Bitmap finalBitmap,String filename) {
+
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/Tworld");
+        myDir.mkdirs();
+
+        String fname = filename;
+        File file = new File(myDir, fname);
+        if (file.exists()) file.delete();
+
+        try {
+            file.createNewFile();
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -232,12 +307,42 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         }
         if ((view != null && isVisibleToUser) && isdataload) {
 
-            apiCall();
+            //apiCall();
 
         }
 
     }
+    public  void apiCallForUploadImg(File file){
+        try {
+            Map<String,RequestBody> map = new HashMap<>();
 
+            RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/*"), file);
+            // Create MultipartBody.Part using file request-body,file name and part name
+            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
+            new BaseAPIService(getContext(), SERVICE_UPLOAD_PROFILE_PIC,part, responseListenerForUploadImg,map);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    ResponseListener responseListenerForUploadImg = new ResponseListener() {
+        @Override
+        public void onSuccess(String res) {
+            try {
+                JSONObject jsonObject = new JSONObject(res);
+                JSONObject jsonObject1 = jsonObject.getJSONObject(WS_KEY_OBJ);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(String error) {
+            Utils.methodToast(context, error);
+        }
+    };
     public void openSetting() {
         SettingFragment settingFragment = new SettingFragment();
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -326,7 +431,27 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
         return view;
     }
-
+    // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+    // CALL THIS METHOD TO GET THE ACTUAL PATH
+    public String getRealPathFromURI(Uri uri) {
+        String path = "";
+        if (context.getContentResolver() != null) {
+            Cursor cursor =context.getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                path = cursor.getString(idx);
+                cursor.close();
+            }
+        }
+        return path;
+    }
 
     //inner helper method
     private Uri getOutputMediaFileUri(int mediaTypeImage) {
@@ -406,12 +531,10 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         View view3 = LayoutInflater.from(context).inflate(R.layout.item_tabs_profile_menu, null);
         ImageView imageView3 = view3.findViewById(R.id.image);
         imageView3.setImageDrawable(getResources().getDrawable(R.drawable.ic_mention));
-        imageView3.setColorFilter(ContextCompat.getColor(context, R.color.gray), android.graphics.PorterDuff.Mode.SRC_IN);
+        imageView3.setColorFilter(ContextCompat.getColor(context, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
         tabLayout.getTabAt(2).setCustomView(view3);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-
-
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 View v = tab.getCustomView();
@@ -620,9 +743,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
     }
 
 
-    public void Open_Setting() {
-        Open_menu_tab(setting_btn);
-    }
+
 
 
     public void Open_Edit_profile() {
@@ -652,42 +773,13 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         transaction.replace(R.id.MainMenuFragment, see_image_f).commit();
     }
 
-
-    public void Open_menu_tab(View anchor_view) {
-        Context wrapper = new ContextThemeWrapper(context, R.style.AlertDialogCustom);
-        PopupMenu popup = new PopupMenu(wrapper, anchor_view);
-        popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            popup.setGravity(Gravity.TOP | Gravity.RIGHT);
-        }
-        popup.show();
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                switch (item.getItemId()) {
-                    case R.id.edit_Profile_id:
-                        Open_Edit_profile();
-                        break;
-
-                    case R.id.logout_id:
-                        Logout();
-                        break;
-                }
-                return true;
-            }
-        });
-
-    }
-
-
     public void Open_Following() {
 
         Following_F following_f = new Following_F(new Fragment_Callback() {
             @Override
             public void Responce(Bundle bundle) {
 
-                apiCall();
+                //apiCall();
 
             }
         });
@@ -706,7 +798,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         Following_F following_f = new Following_F(new Fragment_Callback() {
             @Override
             public void Responce(Bundle bundle) {
-                apiCall();
+              //  apiCall();
             }
         });
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();

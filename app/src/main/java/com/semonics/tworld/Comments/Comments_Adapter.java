@@ -1,7 +1,9 @@
 package com.semonics.tworld.Comments;
 
 import android.content.Context;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +19,11 @@ import java.util.ArrayList;
  * Created by AQEEL on 3/20/2018.
  */
 
-public class Comments_Adapter extends RecyclerView.Adapter<Comments_Adapter.CustomViewHolder > {
+public class Comments_Adapter extends RecyclerView.Adapter<Comments_Adapter.CustomViewHolder> {
 
     public Context context;
     private Comments_Adapter.OnItemClickListener listener;
     private ArrayList<Comment_Get_Set> dataList;
-
 
 
     // meker the onitemclick listener interface and this interface is impliment in Chatinbox activity
@@ -40,7 +41,7 @@ public class Comments_Adapter extends RecyclerView.Adapter<Comments_Adapter.Cust
 
     @Override
     public Comments_Adapter.CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewtype) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_comment_layout,null);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_comment_layout, null);
         view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
         Comments_Adapter.CustomViewHolder viewHolder = new Comments_Adapter.CustomViewHolder(view);
         return viewHolder;
@@ -48,68 +49,53 @@ public class Comments_Adapter extends RecyclerView.Adapter<Comments_Adapter.Cust
 
     @Override
     public int getItemCount() {
-       return dataList.size();
+        return dataList.size();
     }
 
 
     @Override
     public void onBindViewHolder(final Comments_Adapter.CustomViewHolder holder, final int i) {
-        final Comment_Get_Set item= dataList.get(i);
+        final Comment_Get_Set item = dataList.get(i);
+        holder.username.setText(item.userDetails.firstName + " " + item.userDetails.lastName);
 
+        try {
+            Picasso.with(context).
+                    load(item.userDetails.profilePic)
+                    .resize(50, 50)
+                    .placeholder(context.getResources().getDrawable(R.drawable.user_profile))
+                    .into(holder.user_pic);
 
-        holder.username.setText(item.first_name+" "+item.last_name);
+        } catch (Exception e) {
+        }
 
-        try{
-        Picasso.with(context).
-                load(item.profile_pic)
-                .resize(50,50)
-                .placeholder(context.getResources().getDrawable(R.drawable.user_profile))
-                .into(holder.user_pic);
-
-       }catch (Exception e){
-
-       }
-
-        holder.message.setText(item.comments);
-
-
-        holder.bind(i,item,listener);
-
-   }
-
+        holder.message.setText(item.comment);
+        holder.bind(i, item, listener);
+    }
 
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        TextView username,message;
+        TextView username, message;
         ImageView user_pic;
-
 
         public CustomViewHolder(View view) {
             super(view);
 
-            username=view.findViewById(R.id.username);
-            user_pic=view.findViewById(R.id.user_pic);
-            message=view.findViewById(R.id.message);
+            username = view.findViewById(R.id.username);
+            user_pic = view.findViewById(R.id.user_pic);
+            message = view.findViewById(R.id.message);
 
         }
 
-        public void bind(final int postion,final Comment_Get_Set item, final Comments_Adapter.OnItemClickListener listener) {
+        public void bind(final int postion, final Comment_Get_Set item, final Comments_Adapter.OnItemClickListener listener) {
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(postion,item,v);
+                    listener.onItemClick(postion, item, v);
                 }
             });
 
         }
-
-
     }
-
-
-
-
-
 }

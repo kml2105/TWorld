@@ -48,6 +48,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -151,28 +152,18 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
             MultipartBody.Part multipartBody = null;
             try {
                 fileToPass = new File(compressVideoFilePath);
-                requestFile = RequestBody.create(MediaType.parse("image/png"), getBytes());
-                multipartBody = MultipartBody.Part.createFormData("video_thumbnail", fileToPass.getName().replace(".mp4", ".png"), requestFile);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            RequestBody videoNameBody = RequestBody.create(MediaType.parse("text/plain"), fileToPass.getName());
-            RequestBody descBody = RequestBody.create(MediaType.parse("text/plain"), description_edit.getText().toString().trim());
-          //  RequestBody tagBody = RequestBody.create(MediaType.parse("text/plain"), tags);
-            RequestBody durationBody = RequestBody.create(MediaType.parse("text/plain"), videoDuration + "");
-            RequestBody sizeBody = RequestBody.create(MediaType.parse("text/plain"), "5");
-
-
-            HashMap<String, RequestBody> map = new HashMap<>();
-            map.put("video_name", videoNameBody);
-            map.put("description", descBody);
-          //  map.put("tags", tagBody);
-            map.put("duration", durationBody);
-            map.put("size", sizeBody);
+            Map<String,String> map = new HashMap<String, String>() {};
+            map.put("location","");
+            map.put("hashtag","");
+            map.put("caption",description_edit.getText().toString());
+            map.put("People","");
 
 //            Utility.printRequestLog(videoJson.toString());
-            new BaseAPIService(this, SERVICE_UPLOAD_DOC, multipartBody, map, responseListener);
+          //   new BaseAPIService(this, SERVICE_UPLOAD_DOC,fileToPass,responseListener,map);
             //, , this,true,this, "POST",true,true
         } catch (Exception e) {
             e.printStackTrace();

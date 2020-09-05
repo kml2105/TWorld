@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.semonics.tworld.WebService.WSParams.BASE_URL;
 
@@ -30,6 +31,7 @@ public class RetrofitBuilder {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.readTimeout(90, TimeUnit.SECONDS);
         httpClient.connectTimeout(90, TimeUnit.SECONDS);
+
         httpClient.writeTimeout(90, TimeUnit.SECONDS);
         httpClient.addInterceptor(new Interceptor() {
             @Override
@@ -39,12 +41,14 @@ public class RetrofitBuilder {
                         .header("Authorization", "Bearer "+ TWorld.getInstance().getSession().getString(SessionManager.PREF_TOKEN))
                         .header("Content-Type", "application/json")
                         .header("Accept","application/json")
+
                         .method(original.method(), original.body()).build();
                 return chain.proceed(request);
             }
         });
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.baseUrl(BASE_URL).client(httpClient.build());
+        builder.addConverterFactory(GsonConverterFactory.create());
 
         return builder;
     }

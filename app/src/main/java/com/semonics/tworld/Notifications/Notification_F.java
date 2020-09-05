@@ -20,12 +20,17 @@ import com.semonics.tworld.Main_Menu.RelateToFragment_OnBack.RootFragment;
 import com.semonics.tworld.R;
 import com.semonics.tworld.SimpleClasses.Utils;
 import com.semonics.tworld.WebService.BaseAPIService;
+import com.semonics.tworld.WebService.RequestParams;
 import com.semonics.tworld.WebService.ResponseListener;
+import com.semonics.tworld.WebService.SessionManager;
+import com.semonics.tworld.WebService.TWorld;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import okhttp3.RequestBody;
 
 import static com.semonics.tworld.WebService.WSParams.METHOD_GET;
 import static com.semonics.tworld.WebService.WSParams.METHOD_POST;
@@ -47,12 +52,12 @@ public class Notification_F extends RootFragment {
     View view;
     Context context;
 
-    Notification_Adapter adapter;
+    Notification_Adapter adapterForNew,adapterForAll;
     RecyclerView recyclerViewAll, recyclerViewNew;
     RelativeLayout llNoDataLayout;
     TextView tvReqCount;
     LinearLayout llPendingReq;
-
+    SessionManager sessionManager;
     ArrayList<Notification_Get_Set> datalist;
 
 
@@ -82,21 +87,28 @@ public class Notification_F extends RootFragment {
         recyclerViewAll.setHasFixedSize(true);
         llPendingReq = view.findViewById(R.id.ll_pending_requests);
 
-        adapter = new Notification_Adapter(context, datalist, new Notification_Adapter.OnItemClickListener() {
+        adapterForNew = new Notification_Adapter(context, datalist, new Notification_Adapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int postion, Notification_Get_Set item) {
                 apiCallForReadNotification(datalist.get(postion).id);
             }
         }
         );
-
-        recyclerViewNew.setAdapter(adapter);
-        recyclerViewAll.setAdapter(adapter);
+        adapterForAll = new Notification_Adapter(context, datalist, new Notification_Adapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int postion, Notification_Get_Set item) {
+                apiCallForReadNotification(datalist.get(postion).id);
+            }
+        }
+        );
+        sessionManager = TWorld.getInstance().getSession();
+        recyclerViewNew.setAdapter(adapterForNew);
+        recyclerViewAll.setAdapter(adapterForAll);
 
         // apiCall();
 
         llNoDataLayout = view.findViewById(R.id.no_data_layout);
-        if (tvReqCount.getText() != "0") {
+        if (sessionManager.getInt(SessionManager.PREF_PRIVATE_ACC) == 0) {
             llPendingReq.setVisibility(View.VISIBLE);
         } else {
             llPendingReq.setVisibility(View.GONE);
@@ -136,14 +148,13 @@ public class Notification_F extends RootFragment {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
         transaction.addToBackStack(null);
-        transaction.replace(R.id.MainMenuFragment, inbox_f).commit();
+//        transaction.replace(R.id.MainMenuFragment, inbox_f).commit();
 
     }
 
     public void apiCall() {
         try {
             new BaseAPIService(context, SERVICE_GET_PENDING_REQ_COUNT, null, true, responseListener, METHOD_GET, false);
-            apiCallForAllUnseenNoti();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -175,7 +186,7 @@ public class Notification_F extends RootFragment {
 
     public void apiCallForReadNotification(String id) {
         try {
-            new BaseAPIService(context, SERVICE_READ_NOTI+id, null, true, responseListenerForReadNotification, METHOD_POST, false);
+            new BaseAPIService(context, SERVICE_READ_NOTI + id, RequestParams.likeVideo(), true, responseListenerForReadNotification, METHOD_POST, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -202,8 +213,13 @@ public class Notification_F extends RootFragment {
 
     public void apiCallForAllUnseenNoti() {
         try {
+            if (sessionManager.getInt(SessionManager.PREF_PRIVATE_ACC) == 0) {
+                llPendingReq.setVisibility(View.VISIBLE);
+            } else {
+                llPendingReq.setVisibility(View.GONE);
+            }
             new BaseAPIService(context, SERVICE_GET_NEW_NOTI, null, true, responseListenerForAllUnseenNoti, METHOD_GET, false);
-            apiCallForAllSeenNoti();
+            apiCall();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -228,7 +244,7 @@ public class Notification_F extends RootFragment {
                         datalist.add(notification_get_set);
                     }
 
-                    adapter.notifyDataSetChanged();
+                    adapterForNew.notifyDataSetChanged();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -245,6 +261,7 @@ public class Notification_F extends RootFragment {
     public void apiCallForAllSeenNoti() {
         try {
             new BaseAPIService(context, SERVICE_GET_SEEN_NOTI, null, true, responseListenerForAllseenNoti, METHOD_GET, false);
+            apiCallForAllUnseenNoti();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -269,7 +286,7 @@ public class Notification_F extends RootFragment {
                         datalist.add(notification_get_set);
                     }
 
-                    adapter.notifyDataSetChanged();
+                    adapterForAll.notifyDataSetChanged();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

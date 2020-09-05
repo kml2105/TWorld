@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,14 +93,35 @@ public class SearchVideoFragment extends Fragment {
             }
         });
         recyclerView.setAdapter(adapter);
-        search_edit = view.findViewById(R.id.search_edit_video);
         llNoData = view.findViewById(R.id.no_data_layout);
+        search_edit = view.findViewById(R.id.search_edit_video);
+        search_edit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                String query = search_edit.getText().toString();
+                if (adapter != null)
+                    searchVideoApi();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+
+        });
         searchVideoApi();
         return view;
     }
 
 
     public void searchVideoApi() {
+        Utils.hideSoftKeyboard(search_edit,getContext());
         sessionManager.putString(SessionManager.PREF_SEARCH_KEYWORD, search_edit.getText().toString());
         try {
             new BaseAPIService(getContext(), pos == 1 ? SERVICE_SEARCH_VIDEO : SERVICE_SEARCH_MUSIC, null, false, responseListener, METHOD_GET, true);
